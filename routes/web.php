@@ -19,6 +19,9 @@ Route::middleware('auth')->group(function () {
     
     // Quiz routes
     Route::get('/quiz/{month}', [QuizController::class, 'showMonth'])->name('quiz.month');
+    Route::get('/quiz/{quizId}/start', [QuizController::class, 'startQuiz'])->name('quiz.start');
+    Route::post('/quiz/{quizId}/question/{questionId}/answer', [QuizController::class, 'submitAnswer'])->name('quiz.submit-answer');
+    Route::get('/quiz/{quizId}/complete', [QuizController::class, 'completeQuiz'])->name('quiz.complete');
 });
 
 require __DIR__.'/auth.php';
