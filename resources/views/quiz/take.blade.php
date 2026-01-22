@@ -121,13 +121,15 @@
             
             const formData = new FormData(form);
             const questionId = document.getElementById('question-id').value;
+            const quizId = {{ $quiz->id }};
+            const submitUrl = `/quiz/${quizId}/question/${questionId}/answer`;
             
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
             errorMessage.textContent = '';
             
             try {
-                const response = await fetch(`{{ route('quiz.submit-answer', ['quizId' => $quiz->id, 'questionId' => '__QUESTION_ID__']) }}`.replace('__QUESTION_ID__', questionId), {
+                const response = await fetch(submitUrl, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -165,15 +167,18 @@
             document.getElementById('question-id').value = question.id;
             document.getElementById('current-question').textContent = questionNumber;
             
-            // Update options
+            // Update options - handle varying number of options
             const labels = document.querySelectorAll('.option-label');
             const options = [question.option_1, question.option_2, question.option_3, question.option_4];
             
             labels.forEach((label, index) => {
-                if (options[index]) {
-                    label.querySelector('.option-text').textContent = options[index];
+                const optionText = label.querySelector('.option-text');
+                const radioInput = label.querySelector('input');
+                
+                if (options[index] && options[index] !== null) {
+                    if (optionText) optionText.textContent = options[index];
+                    if (radioInput) radioInput.checked = false;
                     label.style.display = 'flex';
-                    label.querySelector('input').checked = false;
                 } else {
                     label.style.display = 'none';
                 }

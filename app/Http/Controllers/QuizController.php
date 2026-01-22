@@ -20,9 +20,7 @@ class QuizController extends Controller
         }
 
         // Get quizzes from database for this month
-        $quizzes = Quiz::whereMonth('start', date('m', strtotime($month)))
-            ->orWhere('name', 'like', '%' . ucfirst($month) . '%')
-            ->get();
+        $quizzes = Quiz::where('name', 'like', '%' . ucfirst($month) . '%')->get();
 
         return view('quiz.month', [
             'month' => ucfirst($month),
@@ -65,8 +63,8 @@ class QuizController extends Controller
             ->first();
 
         if (!$currentQuestion) {
-            // All questions answered
-            $currentQuestion = $quiz->questions()->first();
+            // All questions answered, redirect to completion
+            return redirect()->route('quiz.complete', $quiz->id);
         }
 
         return view('quiz.take', [
@@ -135,7 +133,7 @@ class QuizController extends Controller
                     'option_3' => $nextQuestion->option_3,
                     'option_4' => $nextQuestion->option_4,
                 ],
-                'question_number' => count($answeredQuestionIds) + 1,
+                'question_number' => count($answeredQuestionIds),
             ]);
         } else {
             // Quiz complete

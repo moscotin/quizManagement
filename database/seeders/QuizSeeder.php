@@ -17,8 +17,8 @@ class QuizSeeder extends Seeder
         // Create a February quiz
         $quiz1 = Quiz::create([
             'name' => 'Quiz 1 - February',
-            'start' => now()->setMonth(2)->setDay(1)->setTime(9, 0),
-            'end' => now()->setMonth(2)->setDay(28)->setTime(17, 0),
+            'start' => \Carbon\Carbon::create(2026, 2, 1, 9, 0, 0),
+            'end' => \Carbon\Carbon::create(2026, 2, 28, 17, 0, 0),
             'required_correct_answers' => 3,
         ]);
 
@@ -76,8 +76,8 @@ class QuizSeeder extends Seeder
         // Create a March quiz
         $quiz2 = Quiz::create([
             'name' => 'Quiz 2 - March',
-            'start' => now()->setMonth(3)->setDay(1)->setTime(9, 0),
-            'end' => now()->setMonth(3)->setDay(31)->setTime(17, 0),
+            'start' => \Carbon\Carbon::create(2026, 3, 1, 9, 0, 0),
+            'end' => \Carbon\Carbon::create(2026, 3, 31, 17, 0, 0),
             'required_correct_answers' => 2,
         ]);
 
