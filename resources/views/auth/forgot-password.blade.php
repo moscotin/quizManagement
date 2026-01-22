@@ -1,5 +1,7 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
+    <h2 class="text-2xl font-bold mb-4 text-center dark:text-[#EDEDEC]">Восстановление пароля</h2>
+
+    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {{ __('Забыли пароль? Ничего страшного. Укажите адрес электронной почты, и мы отправим вам ссылку для сброса пароля, с помощью которой вы сможете задать новый.') }}
     </div>
 

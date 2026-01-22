@@ -1,4 +1,6 @@
 <x-guest-layout>
+    <h2 class="text-2xl font-bold mb-4 text-center dark:text-[#EDEDEC]">Сброс пароля</h2>
+
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 
