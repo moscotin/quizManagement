@@ -1,4 +1,6 @@
 <x-guest-layout>
+    <h2 class="text-2xl font-bold mb-6 text-center dark:text-[#EDEDEC]">Регистрация</h2>
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -85,7 +87,7 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-[#333398] dark:hover:text-[#5555CC] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#333398]"
                href="{{ route('login') }}">
                 {{ __('Уже зарегистрированы?') }}
             </a>

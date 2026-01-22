@@ -2,6 +2,8 @@
     <!-- Статус сессии -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <h2 class="text-2xl font-bold mb-6 text-center dark:text-[#EDEDEC]">Вход</h2>
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
@@ -38,15 +40,15 @@
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me"
                        type="checkbox"
-                       class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                       class="rounded border-gray-300 text-[#333398] shadow-sm focus:ring-[#333398]"
                        name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Запомнить меня') }}</span>
+                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Запомнить меня') }}</span>
             </label>
         </div>
 
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-[#333398] dark:hover:text-[#5555CC] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#333398]"
                    href="{{ route('password.request') }}">
                     {{ __('Забыли пароль?') }}
                 </a>

@@ -1,5 +1,7 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
+    <h2 class="text-2xl font-bold mb-4 text-center dark:text-[#EDEDEC]">Подтверждение</h2>
+
+    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {{ __('Это защищённая область приложения. Пожалуйста, подтвердите свой пароль, чтобы продолжить.') }}
     </div>
 
