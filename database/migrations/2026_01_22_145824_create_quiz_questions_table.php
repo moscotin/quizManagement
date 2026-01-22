@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('option_2');
             $table->string('option_3')->nullable();
             $table->string('option_4')->nullable();
-            $table->integer('correct_option');
+            $table->integer('correct_option'); // Should be 1-4, validated at application level
             $table->timestamps();
         });
     }
