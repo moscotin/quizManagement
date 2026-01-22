@@ -14,7 +14,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex items-center justify-center min-h-screen flex-col relative overflow-hidden">
+    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex items-center justify-center min-h-screen flex-col relative">
         <div class="absolute w-full px-12 top-0">
             <div class="flex w-full mt-4">
                 <!-- Logo floated left -->
@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <div class="w-full sm:max-w-md mt-24 px-6 py-8 bg-white dark:bg-[#1a1a1a] shadow-lg overflow-hidden rounded-lg">
+        <div class="w-full sm:max-w-lg mt-24 mb-32 px-6 py-8 bg-white dark:bg-[#1a1a1a] shadow-lg overflow-hidden rounded-lg">
             {{ $slot }}
         </div>
 
