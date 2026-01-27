@@ -14,7 +14,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex items-center justify-center min-h-screen flex-col relative">
+    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex items-center justify-center min-h-screen flex-col relative bg-[url('/img/bg_left.svg')] bg-left bg-no-repeat">
         <div class="absolute w-full px-12 top-0">
             <div class="flex w-full mt-4">
                 <!-- Logo floated left -->

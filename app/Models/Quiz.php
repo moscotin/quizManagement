@@ -17,6 +17,7 @@ class Quiz extends Model
      */
     protected $fillable = [
         'name',
+        'category_id',
         'start',
         'end',
         'required_correct_answers',
@@ -49,5 +50,29 @@ class Quiz extends Model
     public function participants(): HasMany
     {
         return $this->hasMany(QuizParticipant::class);
+    }
+
+    /* Get the quiz start month */
+    public function getStartMonthAttribute()
+    {
+        return $this->start->format('F');
+    }
+
+    /* Check if the quiz was taken by user */
+    public function isTakenByUser($user) {
+        $userId = is_object($user) ? $user->id : $user;
+        return $this->participants()
+            ->where('user_id', $userId)
+            ->where('completed_at', '!=', null)
+            ->exists();
+    }
+
+    /* Check if the quiz was started by user */
+    public function isStartedByUser($user) {
+        $userId = is_object($user) ? $user->id : $user;
+        return $this->participants()
+            ->where('user_id', $userId)
+            ->where('completed_at', null)
+            ->exists();
     }
 }

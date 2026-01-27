@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quiz;
+use App\Models\QuizCategory;
 use App\Models\QuizQuestion;
 use App\Models\QuizParticipant;
 use App\Models\QuizResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+// use CarbonInterval
+use Carbon\CarbonInterval;
 
 class QuizController extends Controller
 {
@@ -20,11 +23,99 @@ class QuizController extends Controller
         }
 
         // Get quizzes from database for this month
-        $quizzes = Quiz::where('name', 'like', '%' . ucfirst($month) . '%')->get();
+        $quizCategories = QuizCategory::getCategoriesByMonth($month);
 
         return view('quiz.month', [
             'month' => ucfirst($month),
-            'quizzes' => $quizzes
+            'quizCats' => $quizCategories,
+            'questionWording' => function ($count) {
+                $lastDigit = $count % 10;
+                if ($count % 100 >= 11 && $count % 100 <= 14) {
+                    return 'вопросов';
+                }
+                switch ($lastDigit) {
+                    case 1:
+                        return 'вопрос';
+                    case 2:
+                    case 3:
+                    case 4:
+                        return 'вопроса';
+                    default:
+                        return 'вопросов';
+                }
+            },
+            'russianMonthName' => function ($month) {
+                $months = [
+                    'january' => 'Январь',
+                    'february' => 'Февраль',
+                    'march' => 'Март',
+                    'april' => 'Апрель',
+                    'may' => 'Май',
+                    'june' => 'Июнь',
+                    'july' => 'Июль',
+                    'august' => 'Август',
+                    'september' => 'Сентябрь',
+                    'october' => 'Октябрь',
+                    'november' => 'Ноябрь',
+                    'december' => 'Декабрь',
+                ];
+                return $months[strtolower($month)] ?? $month;
+            },
+        ]);
+    }
+
+    public function showCategory($month, $category_id)
+    {
+        // Validate month
+        $validMonths = ['february', 'march', 'april', 'may'];
+        if (!in_array(strtolower($month), $validMonths)) {
+            abort(404);
+        }
+
+        // month from string to number
+        $monthNum = strtotime($month);
+
+        // Get quizzes from database for this month
+        $quizzes = Quiz::where('category_id', $category_id)
+            ->whereMonth('start', date('m', $monthNum))
+            ->get();
+
+        return view('quiz.category', [
+            'month' => ucfirst($month),
+            'quizzes' => $quizzes,
+            'questionWording' => function ($count) {
+                $lastDigit = $count % 10;
+                if ($count % 100 >= 11 && $count % 100 <= 14) {
+                    return 'вопросов';
+                }
+                switch ($lastDigit) {
+                    case 1:
+                        return 'вопрос';
+                    case 2:
+                    case 3:
+                    case 4:
+                        return 'вопроса';
+                    default:
+                        return 'вопросов';
+                }
+            },
+            'russianMonthName' => function ($month) {
+                $months = [
+                    'january' => 'Январь',
+                    'february' => 'Февраль',
+                    'march' => 'Март',
+                    'april' => 'Апрель',
+                    'may' => 'Май',
+                    'june' => 'Июнь',
+                    'july' => 'Июль',
+                    'august' => 'Август',
+                    'september' => 'Сентябрь',
+                    'october' => 'Октябрь',
+                    'november' => 'Ноябрь',
+                    'december' => 'Декабрь',
+                ];
+                return $months[strtolower($month)] ?? $month;
+            },
         ]);
     }
 
@@ -39,7 +130,7 @@ class QuizController extends Controller
             ->first();
 
         if ($participant && $participant->completed_at) {
-            return redirect()->route('dashboard')->with('error', 'You have already completed this quiz.');
+            return redirect()->route('quiz.complete', $quiz->id);
         }
 
         // Create or update participant record
@@ -94,14 +185,14 @@ class QuizController extends Controller
         // Check if time limit exceeded (20 minutes)
         if ($participant->started_at && $participant->started_at->diffInMinutes(now()) > 20) {
             return response()->json([
-                'error' => 'Time limit exceeded',
+                'error' => 'Время на прохождение викторины истекло.',
                 'redirect' => route('quiz.complete', $quiz->id)
             ], 422);
         }
 
         // Save response
         $isCorrect = $request->selected_option == $question->correct_option;
-        
+
         QuizResponse::updateOrCreate(
             [
                 'participant_id' => $participant->id,
@@ -160,16 +251,20 @@ class QuizController extends Controller
             ->count();
 
         // Update participant with score and completion time
-        $participant->update([
-            'score' => $correctAnswers,
-            'completed_at' => now(),
-        ]);
+        // after checking if not already completed
+        if ($participant->completed_at === null) {
+            $participant->update([
+                'score' => $correctAnswers,
+                'completed_at' => now(),
+            ]);
+        }
 
         return view('quiz.complete', [
             'quiz' => $quiz,
             'score' => $correctAnswers,
             'totalQuestions' => $quiz->questions->count(),
             'participant' => $participant,
+            'minutesTaken' => CarbonInterval::minutes(ceil($participant->started_at->diffInMinutes($participant->completed_at)))->locale('ru')->forHumans(),
         ]);
     }
 }

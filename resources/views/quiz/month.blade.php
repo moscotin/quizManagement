@@ -1,41 +1,45 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Quizzes for ') . $month }}
-        </h2>
-    </x-slot>
-
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-4">
-                        <a href="{{ route('dashboard') }}" class="text-blue-500 hover:text-blue-700">
-                            ← Back to Dashboard
+                        <a href="{{ route('dashboard') }}" class="font-blue hover:text-blue-700">
+                            ← Назад к выбору месяца
                         </a>
                     </div>
-                    
-                    <h3 class="text-lg font-semibold mb-4">Select a Quiz</h3>
-                    
-                    @if($quizzes->count() > 0)
+
+                    <h3 class="text-lg font-semibold mb-4 text-center">{{ $russianMonthName($month) }}</h3>
+
+                    @if($quizCats->count() > 0)
                         <div class="space-y-4">
-                            @foreach($quizzes as $quiz)
-                                <div class="border border-gray-300 rounded-lg p-4 hover:bg-gray-50 transition">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <h4 class="font-semibold text-lg">{{ $quiz->name }}</h4>
-                                            <p class="text-gray-600 text-sm">{{ $quiz->questions->count() }} questions</p>
-                                            <p class="text-gray-600 text-sm">Time limit: 20 minutes</p>
-                                        </div>
-                                        <a href="{{ route('quiz.start', $quiz->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                            Start Quiz
+                            <div class="flex items-center justify-between">
+                            @foreach($quizCats as $quizCat)
+                                <div class="flex-col lg:w-1/3 p-4 flex items-center space-y-4">
+                                    <div class="">
+                                        <a href="{{ route('quiz.category', [
+                                            'month' => $month,
+                                            'category' => $quizCat->id
+                                        ]) }}">
+                                            <img src="{{ asset('img/' . ($quizCat->image ?? 'default.png')) }}" alt="Quiz Icon" class="h-52">
                                         </a>
                                     </div>
+                                    <div class="text-center">
+                                        <h4 class="font-semibold text-lg">{{ $quizCat->name }}</h4>
+                                    </div>
+                                    <a href="{{ route('quiz.category', [
+                                        'month' => $month,
+                                        'category' => $quizCat->id
+                                    ]) }}"
+                                       class="btn-purple btn-hover-white btn-glow">
+                                        Перейти в категорию
+                                    </a>
                                 </div>
                             @endforeach
+                            </div>
                         </div>
                     @else
-                        <p class="text-gray-600">No quizzes available for {{ $month }} yet.</p>
+                        <p class="text-gray-600">Не найдено викторин за {{ $month }}.</p>
                     @endif
                 </div>
             </div>

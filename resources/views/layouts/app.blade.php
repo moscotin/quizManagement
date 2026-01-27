@@ -13,8 +13,9 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] antialiased">
+    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] antialiased bg-[url('/img/net.svg')] bg-bottom bg-no-repeat">
         <div class="min-h-screen">
             @include('layouts.navigation')
 
@@ -27,12 +28,22 @@
                 </header>
             @endisset
 
+            <!-- block with errors -->
+            @if (session('error'))
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong class="font-bold">Ошибка!</strong>
+                        <span class="block sm:inline">{{ session('error') }}</span>
+                    </div>
+                </div>
+            @endif
+
             <!-- Page Content -->
-            <main>
+            <main id="app-content">
                 {{ $slot }}
             </main>
         </div>
-        
+
         @stack('scripts')
     </body>
 </html>

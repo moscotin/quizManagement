@@ -43,6 +43,12 @@
         border-color: #333398;
     }
 
+    .btn-white {
+        background: #ffffff;
+        border-color: #ffffff;
+        color: #333398;
+    }
+
     .btn-hover-white:hover {
         background: #ffffff;
         color: #333398;
