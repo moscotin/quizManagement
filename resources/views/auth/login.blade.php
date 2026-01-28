@@ -58,5 +58,13 @@
                 {{ __('Войти') }}
             </x-primary-button>
         </div>
+
+        <!-- Регистрация -->
+        <div class="mt-4 text-center">
+            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-[#333398] dark:hover:text-[#5555CC] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#333398]"
+               href="{{ route('register') }}">
+                {{ __('Нет аккаунта? Зарегистрироваться') }}
+            </a>
+        </div>
     </form>
 </x-guest-layout>

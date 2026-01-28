@@ -81,6 +81,18 @@ class QuizController extends Controller
             ->whereMonth('start', date('m', $monthNum))
             ->get();
 
+        // Check if user completed all quizzes in this category
+        $user = Auth::user();
+        if ($user) {
+            $all_quizzes_completed = true;
+            foreach ($quizzes as $quiz) {
+                if (!$quiz->isTakenByUser($user)) {
+                    $all_quizzes_completed = false;
+                    break;
+                }
+            }
+        }
+
         return view('quiz.category', [
             'month' => ucfirst($month),
             'quizzes' => $quizzes,
@@ -117,6 +129,7 @@ class QuizController extends Controller
                 ];
                 return $months[strtolower($month)] ?? $month;
             },
+            'all_quizzes_completed' => $all_quizzes_completed ?? false,
         ]);
     }
 
@@ -284,6 +297,33 @@ class QuizController extends Controller
         return response()->streamDownload(
             fn () => print($image),
             'certificate.jpg',
+            ['Content-Type' => 'image/jpeg']
+        );
+    }
+
+    public function viewDiploma($categoryId, $month)
+    {
+        $user = auth()->user();
+
+        $quizzes = Quiz::where('category_id', $categoryId)
+            ->whereMonth('start', date('m', strtotime($month)))
+            ->get();
+        // Check if user completed all quizzes in this category
+        $all_quizzes_completed = true;
+        foreach ($quizzes as $quiz) {
+            if (!$quiz->isTakenByUser($user)) {
+                $all_quizzes_completed = false;
+                break;
+            }
+        }
+        abort_unless($all_quizzes_completed, 403);
+
+        $image = app(CertificateGenerator::class)
+            ->generateDiploma($quizzes, $user->name, ucfirst($month));
+
+        return response()->streamDownload(
+            fn() => print($image),
+            'diploma.jpg',
             ['Content-Type' => 'image/jpeg']
         );
     }
