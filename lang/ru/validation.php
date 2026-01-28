@@ -3,7 +3,7 @@
 return [
 
     'required' => 'Поле :attribute обязательно для заполнения.',
-    'confirmed' => 'Подтверждение для :attribute не совпадает.',
+    'confirmed' => 'Подтверждение для поля ":attribute" не совпадает.',
     'min' => [
         'string' => 'Поле :attribute должно содержать минимум :min символов.',
     ],
@@ -14,4 +14,5 @@ return [
         'password' => 'новый пароль',
         'password_confirmation' => 'подтверждение пароля',
     ],
+    'unique' => 'Такое значение поля :attribute уже используется.',
 ];

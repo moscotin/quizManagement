@@ -22,7 +22,7 @@
         <div class="mt-4">
             <x-input-label for="age" :value="__('Возраст')" />
             <x-text-input id="age"
-                          class="block mt-1 w-full"
+                          class="block mt-1 w-full age"
                           type="number"
                           name="age"
                           :value="old('age')"
@@ -49,10 +49,10 @@
         <div class="mt-4">
             <x-input-label for="phone_number" :value="__('Номер телефона')" />
             <x-text-input id="phone_number"
-                          class="block mt-1 w-full"
+                          class="block mt-1 w-full phone-mask"
                           type="text"
                           name="phone_number"
-                          :value="old('phone_number')"
+                          :value="old('phone_number', '+7')"
                           required
                           autocomplete="tel" />
             <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
@@ -97,4 +97,33 @@
             </x-primary-button>
         </div>
     </form>
+
+    <script>
+        // phone mask +X (XXX) XXX-XX-XX
+        document.addEventListener('DOMContentLoaded', function () {
+            const phoneInputs = document.querySelectorAll('.phone-mask');
+            phoneInputs.forEach(function (input) {
+                input.addEventListener('input', function (e) {
+                    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+                    e.target.value = !x[2] ? '+' + x[1] : '+' + x[1] + ' (' + x[2] + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+                    // Always start with +7
+                    if (!e.target.value.startsWith('+7')) {
+                        e.target.value = '+7';
+                    }
+                });
+            });
+        });
+
+        // age input restrict to numbers only: from 1 to 120
+        document.addEventListener('DOMContentLoaded', function () {
+            const ageInputs = document.querySelectorAll('.age');
+            ageInputs.forEach(function (input) {
+                input.addEventListener('input', function (e) {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                    if (e.target.value < 1) e.target.value = 1;
+                    if (e.target.value > 120) e.target.value = 120;
+                });
+            });
+        });
+    </script>
 </x-guest-layout>

@@ -21,7 +21,7 @@
                                             'month' => $month,
                                             'category' => $quizCat->id
                                         ]) }}">
-                                            <img src="{{ asset('img/' . ($quizCat->image ?? 'default.png')) }}" alt="Quiz Icon" class="h-52">
+                                            <img src="{{ asset('img/' . ($quizCat->image ?? 'default.png')) }}" alt="Quiz Icon" class="h-64">
                                         </a>
                                     </div>
                                     <div class="text-center">
