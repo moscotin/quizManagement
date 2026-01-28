@@ -7,6 +7,7 @@ use App\Models\QuizCategory;
 use App\Models\QuizQuestion;
 use App\Models\QuizParticipant;
 use App\Models\QuizResponse;
+use App\Services\CertificateGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // use CarbonInterval
@@ -267,4 +268,24 @@ class QuizController extends Controller
             'minutesTaken' => CarbonInterval::minutes(ceil($participant->started_at->diffInMinutes($participant->completed_at)))->locale('ru')->forHumans(),
         ]);
     }
+
+
+    public function viewCertificate($quizId)
+    {
+        $user = auth()->user();
+
+        $quiz = Quiz::findOrFail($quizId);
+
+        abort_unless($quiz->isTakenByUser($user), 403);
+
+        $image = app(CertificateGenerator::class)
+            ->generate($quiz, $user->name);
+
+        return response()->streamDownload(
+            fn () => print($image),
+            'certificate.jpg',
+            ['Content-Type' => 'image/jpeg']
+        );
+    }
+
 }

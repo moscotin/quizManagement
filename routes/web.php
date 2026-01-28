@@ -23,6 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/quiz/{quizId}/start', [QuizController::class, 'startQuiz'])->name('quiz.start');
     Route::post('/quiz/{quizId}/question/{questionId}/answer', [QuizController::class, 'submitAnswer'])->name('quiz.submit-answer');
     Route::get('/quiz/{quizId}/complete', [QuizController::class, 'completeQuiz'])->name('quiz.complete');
+
+    // Certificate and Diploma routes
+    Route::get('/quiz/{quizId}/certificate', [QuizController::class, 'viewCertificate'])->name('quiz.certificate');
+    Route::get('/quiz/{quizId}/diploma', [QuizController::class, 'viewDiploma'])->name('quiz.diploma');
 });
 
 require __DIR__.'/auth.php';

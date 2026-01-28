@@ -17,6 +17,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             // img
             $table->string('image')->nullable();
+            // diploma image
+            $table->string('diploma_image')->nullable();
+            // certificate image
+            $table->string('certificate_image')->nullable();
             $table->timestamps();
         });
     }

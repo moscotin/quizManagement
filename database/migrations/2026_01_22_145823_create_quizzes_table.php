@@ -30,6 +30,10 @@ return new class extends Migration
             $table->string('image4_class')->nullable();
             // required correct answers to get a diploma
             $table->integer('required_correct_answers');
+            // diploma image
+            $table->string('diploma_image')->nullable();
+            // certificate image
+            $table->string('certificate_image')->nullable();
             $table->timestamps();
         });
     }

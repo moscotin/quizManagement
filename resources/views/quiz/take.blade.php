@@ -2,7 +2,7 @@
 
     @php
         // Timer: compute remaining seconds on the server to avoid JS Date parsing/timezone issues (Safari etc.)
-        $durationSeconds = 20 * 60; // 20 minutes
+        $durationSeconds = $quiz->time_limit * 60;
         $elapsed = $participant->started_at
             ? max(0, $participant->started_at->diffInSeconds(now()))
             : 0;

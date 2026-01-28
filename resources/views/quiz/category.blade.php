@@ -39,9 +39,13 @@
                                         <p class="text-gray-600 text-sm">Ограничение по времени: {{ $quiz->time_limit }} минут</p>
                                         @endif
                                     </div>
-                                    @if($quiz->isStartedByUser(auth()->user()) || $quiz->isTakenByUser(auth()->user()))
+                                    @if($quiz->isStartedByUser(auth()->user()))
                                     <a href="{{ route('quiz.start', $quiz->id) }}" class="btn-purple btn-hover-white btn-glow {{ $quiz->isTakenByUser(auth()->user()) ? 'opacity-50 pointer-events-none' : '' }}">
                                         Перейти к викторине
+                                    </a>
+                                    @elseif($quiz->isTakenByUser(auth()->user()))
+                                    <a href="{{ route('quiz.certificate', $quiz->id) }}" class="btn-purple btn-hover-white btn-glow">
+                                        Скачать сертификат
                                     </a>
                                     @else
                                         <a href="{{ route('quiz.start', $quiz->id) }}"
