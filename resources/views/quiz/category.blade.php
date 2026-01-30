@@ -13,7 +13,7 @@
 
                     @if($quizzes->count() > 0)
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-baseline justify-between">
                             @foreach($quizzes as $quiz)
                                 <div class="flex-col lg:w-1/3 w-full p-4 flex items-center space-y-4">
                                     <div class="text-center">
