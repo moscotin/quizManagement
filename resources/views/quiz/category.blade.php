@@ -40,16 +40,16 @@
                                         @endif
                                     </div>
                                     @if($quiz->isStartedByUser(auth()->user()))
-                                    <a href="{{ route('quiz.start', $quiz->id) }}" class="btn-purple btn-hover-white btn-glow text-sm {{ $quiz->isTakenByUser(auth()->user()) ? 'opacity-50 pointer-events-none' : '' }}">
+                                    <a href="{{ route('quiz.start', $quiz->id) }}" class="mt-auto btn-purple btn-hover-white btn-glow text-sm {{ $quiz->isTakenByUser(auth()->user()) ? 'opacity-50 pointer-events-none' : '' }}">
                                         Перейти к викторине
                                     </a>
                                     @elseif($quiz->isTakenByUser(auth()->user()))
-                                    <a href="{{ route('quiz.certificate', $quiz->id) }}" class="btn-purple btn-hover-white btn-glow text-sm">
+                                    <a href="{{ route('quiz.certificate', $quiz->id) }}" class="mt-auto btn-purple btn-hover-white btn-glow text-sm">
                                         Скачать сертификат
                                     </a>
                                     @else
                                         <a href="{{ route('quiz.start', $quiz->id) }}"
-                                           class="btn-purple btn-hover-white btn-glow open-quiz-modal text-sm"
+                                           class="mt-auto btn-purple btn-hover-white btn-glow open-quiz-modal text-sm"
                                            data-start-url="{{ route('quiz.start', $quiz->id) }}"
                                            data-time-limit="{{ $quiz->time_limit }}"
                                         >
