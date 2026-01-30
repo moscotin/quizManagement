@@ -24,5 +24,9 @@ class DatabaseSeeder extends Seeder
             'age' => 30,
             'password' => bcrypt('password'),
         ]);
+
+        $this->call(FebDeSeeder::class);
+        $this->call(QuizCatSeeder::class);
+        $this->call(DemoQuizWithAllTypesSeeder::class);
     }
 }

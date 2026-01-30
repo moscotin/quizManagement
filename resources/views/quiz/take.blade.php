@@ -1,18 +1,15 @@
 <x-quiz-layout>
 
     @php
-        // Timer: compute remaining seconds on the server to avoid JS Date parsing/timezone issues (Safari etc.)
         $durationSeconds = $quiz->time_limit * 60;
-        $elapsed = $participant->started_at
-            ? max(0, $participant->started_at->diffInSeconds(now()))
-            : 0;
-
+        $elapsed = $participant->started_at ? max(0, $participant->started_at->diffInSeconds(now())) : 0;
         $remaining = max(0, $durationSeconds - $elapsed);
+        $qt = $currentQuestion->question_type ?? 'single_choice';
     @endphp
 
     <div class="relative">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 relative z-10">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-3xl  glow-orange">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-3xl glow-orange">
                 <div class="p-6">
                     <!-- Timer and Progress -->
                     <div class="flex justify-between items-center mb-6 pb-4 border-b">
@@ -20,9 +17,7 @@
                             Вопрос <span id="current-question">{{ $questionNumber }}</span> из {{ $totalQuestions }}
                         </div>
                         <div class="flex items-center space-x-4">
-                            <div class="text-sm text-gray-600">
-                                Осталось времени:
-                            </div>
+                            <div class="text-sm text-gray-600">Осталось времени:</div>
                             <div id="timer" class="text-2xl font-bold font-blue">
                                 {{ gmdate('i:s', $remaining) }}
                             </div>
@@ -35,36 +30,70 @@
                             <h3 class="text-xl font-semibold mb-4" id="question-text">
                                 {{ $currentQuestion->question }}
                             </h3>
+
+                            {{-- Optional image --}}
+                            <div id="question-image-wrap" class="{{ $currentQuestion->image ? '' : 'hidden' }} mb-4">
+                                <img id="question-image"
+                                     src="{{ $currentQuestion->image ? asset('storage/'.$currentQuestion->image) : '' }}"
+                                     alt=""
+                                     class="max-w-full rounded-xl border">
+                            </div>
                         </div>
 
-                        <!-- Options -->
-                        <form id="answer-form">
+                        <form id="answer-form" novalidate>
                             @csrf
                             <input type="hidden" name="question_id" id="question-id" value="{{ $currentQuestion->id }}">
+                            <input type="hidden" name="question_type" id="question-type" value="{{ $qt }}">
 
-                            <div class="space-y-3">
-                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition option-label">
-                                    <input type="radio" name="selected_option" value="1" class="mr-3 h-5 w-5" required>
-                                    <span class="option-text">{{ $currentQuestion->option_1 }}</span>
-                                </label>
+                            {{-- SINGLE CHOICE (radio) --}}
+                            <div id="single-choice-block" class="{{ $qt === 'single_choice' ? '' : 'hidden' }}">
+                                <div class="space-y-3" id="single-choice-options">
+                                    @for ($i = 1; $i <= 6; $i++)
+                                        @php $opt = $currentQuestion->{'option_'.$i}; @endphp
+                                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition option-label"
+                                               data-index="{{ $i }}"
+                                               style="{{ $opt ? '' : 'display:none' }}">
+                                            <input type="radio" name="selected_option" value="{{ $i }}" class="mr-3 h-5 w-5">
+                                            <span class="option-text">{{ $opt }}</span>
+                                        </label>
+                                    @endfor
+                                </div>
+                            </div>
 
-                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition option-label">
-                                    <input type="radio" name="selected_option" value="2" class="mr-3 h-5 w-5" required>
-                                    <span class="option-text">{{ $currentQuestion->option_2 }}</span>
-                                </label>
+                            {{-- MULTIPLE CHOICE (checkbox) --}}
+                            <div id="multiple-choice-block" class="{{ $qt === 'multiple_choice' ? '' : 'hidden' }}">
+                                <div class="space-y-3" id="multiple-choice-options">
+                                    @for ($i = 1; $i <= 6; $i++)
+                                        @php $opt = $currentQuestion->{'option_'.$i}; @endphp
+                                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition option-label-multi"
+                                               data-index="{{ $i }}"
+                                               style="{{ $opt ? '' : 'display:none' }}">
+                                            <input type="checkbox" name="selected_options[]" value="{{ $i }}" class="mr-3 h-5 w-5">
+                                            <span class="option-text">{{ $opt }}</span>
+                                        </label>
+                                    @endfor
+                                </div>
+                                <div class="text-xs text-gray-500 mt-2">Можно выбрать несколько вариантов.</div>
+                            </div>
 
-                                {{-- Render 3rd/4th as labels too, but hide if null. This keeps JS simpler. --}}
-                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition option-label"
-                                       style="{{ $currentQuestion->option_3 ? '' : 'display:none' }}">
-                                    <input type="radio" name="selected_option" value="3" class="mr-3 h-5 w-5" required>
-                                    <span class="option-text">{{ $currentQuestion->option_3 }}</span>
-                                </label>
+                            {{-- FILL IN THE BLANK / TEXT --}}
+                            <div id="text-block" class="{{ in_array($qt, ['fill_in_the_blank','text']) ? '' : 'hidden' }}">
+                                <label class="block text-sm text-gray-600 mb-2">Ваш ответ:</label>
+                                <input type="text"
+                                       name="answer_text"
+                                       id="answer-text"
+                                       class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                       placeholder="Введите ответ...">
+                            </div>
 
-                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition option-label"
-                                       style="{{ $currentQuestion->option_4 ? '' : 'display:none' }}">
-                                    <input type="radio" name="selected_option" value="4" class="mr-3 h-5 w-5" required>
-                                    <span class="option-text">{{ $currentQuestion->option_4 }}</span>
-                                </label>
+                            {{-- MATCHING --}}
+                            <div id="matching-block" class="{{ $qt === 'matching' ? '' : 'hidden' }}">
+                                <div class="text-sm text-gray-600 mb-3">
+                                    Соотнесите элементы. Выберите пару для каждой строки.
+                                </div>
+
+                                <div id="matching-ui" data-matching='@json($currentQuestion->matching_pairs ?? [])'></div>
+                                <input type="hidden" name="matching_response" id="matching-response" value="">
                             </div>
 
                             <div class="mt-6 flex justify-between items-center">
@@ -74,31 +103,23 @@
                                 </button>
                             </div>
                         </form>
-                    </div> <!-- /question-container -->
+                    </div>
                 </div>
             </div>
 
             <!-- Background decorative elements -->
-            <!-- flag -->
             <div class="absolute -top-28 -right-20 w-48 h-48 bg-[url('/img/quiz_decorations/en1.webp')] bg-contain bg-no-repeat -z-1"></div>
         </div>
 
-        <!-- More background decorations -->
-        <!-- bottom left -->
         <div class="absolute bottom-0 left-0 w-full h-full bg-[url('/img/quiz_decorations/en2.webp')] bg-contain bg-no-repeat -z-1"></div>
-        <!-- bottom right -->
         <div class="absolute bottom-0 -right-12 w-64 h-64 bg-[url('/img/quiz_decorations/en3.webp')] bg-contain bg-no-repeat -z-1"></div>
-        <!-- top left -->
-        <!--div class="absolute top-0 left-0 w-64 h-64 bg-[url('/img/quiz_decorations/es4.webp')] bg-contain bg-no-repeat -z-1"></div-->
-
     </div>
 
     @push('scripts')
         <script>
             // ----------------------------
-            // Timer functionality
+            // Timer
             // ----------------------------
-            // server-computed seconds remaining (force integer)
             let timeRemaining = parseInt(@json($remaining), 10);
             if (Number.isNaN(timeRemaining) || timeRemaining < 0) timeRemaining = 0;
 
@@ -106,12 +127,10 @@
             const completeUrl = @json(route('quiz.complete', $quiz->id));
 
             function renderTimer() {
-                const t = Math.max(0, Math.floor(timeRemaining));   // <-- force integer
+                const t = Math.max(0, Math.floor(timeRemaining));
                 const minutes = Math.floor(t / 60);
                 const seconds = t % 60;
-
-                timerElement.textContent =
-                    `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+                timerElement.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
 
                 if (t <= 300) {
                     timerElement.classList.remove('text-blue-600');
@@ -121,18 +140,184 @@
 
             function tick() {
                 renderTimer();
-
                 if (timeRemaining <= 0) {
                     clearInterval(timerInterval);
                     window.location.href = completeUrl;
                     return;
                 }
-
-                timeRemaining = Math.floor(timeRemaining) - 1; // <-- keep integer forever
+                timeRemaining = Math.floor(timeRemaining) - 1;
             }
 
             const timerInterval = setInterval(tick, 1000);
             tick();
+
+            // ----------------------------
+            // Blocks enable/disable (IMPORTANT FIX)
+            // ----------------------------
+            const singleBlock = document.getElementById('single-choice-block');
+            const multiBlock  = document.getElementById('multiple-choice-block');
+            const textBlock   = document.getElementById('text-block');
+            const matchBlock  = document.getElementById('matching-block');
+
+            function setBlockEnabled(blockEl, enabled) {
+                blockEl.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.disabled = !enabled;
+                });
+            }
+
+            function clearAllInputs() {
+                document.querySelectorAll('input[type="radio"][name="selected_option"]').forEach(r => r.checked = false);
+                document.querySelectorAll('input[type="checkbox"][name="selected_options[]"]').forEach(c => c.checked = false);
+                const at = document.getElementById('answer-text');
+                if (at) at.value = '';
+                const mr = document.getElementById('matching-response');
+                if (mr) mr.value = '';
+            }
+
+            function showOnlyBlock(type) {
+                // hide all
+                singleBlock.classList.add('hidden');
+                multiBlock.classList.add('hidden');
+                textBlock.classList.add('hidden');
+                matchBlock.classList.add('hidden');
+
+                // disable all inputs in all blocks
+                setBlockEnabled(singleBlock, false);
+                setBlockEnabled(multiBlock, false);
+                setBlockEnabled(textBlock, false);
+                setBlockEnabled(matchBlock, false);
+
+                // clear values when switching type
+                clearAllInputs();
+
+                if (type === 'multiple_choice') {
+                    multiBlock.classList.remove('hidden');
+                    setBlockEnabled(multiBlock, true);
+                } else if (type === 'fill_in_the_blank' || type === 'text') {
+                    textBlock.classList.remove('hidden');
+                    setBlockEnabled(textBlock, true);
+                } else if (type === 'matching') {
+                    matchBlock.classList.remove('hidden');
+                    setBlockEnabled(matchBlock, true);
+                } else {
+                    singleBlock.classList.remove('hidden');
+                    setBlockEnabled(singleBlock, true);
+                }
+            }
+
+            function setQuestionImage(imagePathOrNull) {
+                const wrap = document.getElementById('question-image-wrap');
+                const img  = document.getElementById('question-image');
+
+                if (imagePathOrNull && String(imagePathOrNull).trim() !== '') {
+                    img.src = imagePathOrNull.startsWith('http')
+                        ? imagePathOrNull
+                        : @json(asset('storage')) + '/' + imagePathOrNull.replace(/^\/+/, '');
+                    wrap.classList.remove('hidden');
+                } else {
+                    img.src = '';
+                    wrap.classList.add('hidden');
+                }
+            }
+
+            function updateOptionsSingle(question) {
+                const labels = document.querySelectorAll('#single-choice-options .option-label');
+                labels.forEach((label) => {
+                    const idx = parseInt(label.dataset.index, 10);
+                    const textEl = label.querySelector('.option-text');
+                    const input = label.querySelector('input[type="radio"]');
+                    const value = question[`option_${idx}`];
+
+                    if (value !== null && value !== undefined && String(value).trim() !== '') {
+                        textEl.textContent = value;
+                        input.checked = false;
+                        label.style.display = 'flex';
+                    } else {
+                        input.checked = false;
+                        label.style.display = 'none';
+                    }
+                });
+
+                // ✅ IMPORTANT: do NOT set required here
+            }
+
+            function updateOptionsMulti(question) {
+                const labels = document.querySelectorAll('#multiple-choice-options .option-label-multi');
+                labels.forEach((label) => {
+                    const idx = parseInt(label.dataset.index, 10);
+                    const textEl = label.querySelector('.option-text');
+                    const input = label.querySelector('input[type="checkbox"]');
+                    const value = question[`option_${idx}`];
+
+                    if (value !== null && value !== undefined && String(value).trim() !== '') {
+                        textEl.textContent = value;
+                        input.checked = false;
+                        label.style.display = 'flex';
+                    } else {
+                        input.checked = false;
+                        label.style.display = 'none';
+                    }
+                });
+            }
+
+            function renderMatchingUI(matchingPairs) {
+                const container = document.getElementById('matching-ui');
+                const hidden = document.getElementById('matching-response');
+
+                container.innerHTML = '';
+                hidden.value = '';
+
+                let pairs = [];
+                if (Array.isArray(matchingPairs)) {
+                    pairs = matchingPairs;
+                } else if (matchingPairs && typeof matchingPairs === 'object') {
+                    pairs = Object.entries(matchingPairs).map(([left, right]) => ({left, right}));
+                }
+
+                const leftItems = pairs.map(p => p.left);
+                const rightItems = pairs.map(p => p.right);
+
+                const rows = leftItems.map((left) => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center gap-3 p-3 border rounded-lg mb-2';
+
+                    const leftEl = document.createElement('div');
+                    leftEl.className = 'flex-1 font-medium';
+                    leftEl.textContent = left;
+
+                    const select = document.createElement('select');
+                    select.className = 'flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500';
+                    select.dataset.left = left;
+
+                    const placeholder = document.createElement('option');
+                    placeholder.value = '';
+                    placeholder.textContent = 'Выберите...';
+                    select.appendChild(placeholder);
+
+                    rightItems.forEach((r) => {
+                        const opt = document.createElement('option');
+                        opt.value = r;
+                        opt.textContent = r;
+                        select.appendChild(opt);
+                    });
+
+                    select.addEventListener('change', () => {
+                        const map = {};
+                        container.querySelectorAll('select').forEach(s => {
+                            const l = s.dataset.left;
+                            const v = s.value;
+                            if (l && v) map[l] = v;
+                        });
+                        hidden.value = JSON.stringify(map);
+                    });
+
+                    row.appendChild(leftEl);
+                    row.appendChild(select);
+                    return row;
+                });
+
+                rows.forEach(r => container.appendChild(r));
+            }
 
             // ----------------------------
             // Form submission
@@ -142,26 +327,61 @@
             const errorMessage = document.getElementById('error-message');
 
             const quizId = Number(@json($quiz->id));
-            let currentQuestionNumber = Number(@json($questionNumber));
-            const totalQuestions = Number(@json($totalQuestions));
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                const formData = new FormData(form);
-                const selected = formData.get('selected_option');
-
-                if (!selected) {
-                    errorMessage.textContent = 'Пожалуйста, выберите вариант ответа.';
-                    return;
-                }
-
+                const qType = document.getElementById('question-type').value || 'single_choice';
                 const questionId = document.getElementById('question-id').value;
                 const submitUrl = `/quiz/${quizId}/question/${questionId}/answer`;
 
+                errorMessage.textContent = '';
+
+                let payload = {};
+
+                if (qType === 'multiple_choice') {
+                    const selected = Array.from(document.querySelectorAll('input[name="selected_options[]"]:checked'))
+                        .map(el => parseInt(el.value, 10))
+                        .filter(n => Number.isInteger(n));
+
+                    if (selected.length === 0) {
+                        errorMessage.textContent = 'Пожалуйста, выберите хотя бы один вариант.';
+                        return;
+                    }
+                    payload.selected_options = selected;
+
+                } else if (qType === 'fill_in_the_blank' || qType === 'text') {
+                    const v = (document.getElementById('answer-text').value || '').trim();
+                    if (!v) {
+                        errorMessage.textContent = 'Пожалуйста, введите ответ.';
+                        return;
+                    }
+                    payload.answer_text = v;
+
+                } else if (qType === 'matching') {
+                    const raw = document.getElementById('matching-response').value;
+                    if (!raw) {
+                        errorMessage.textContent = 'Пожалуйста, составьте пары.';
+                        return;
+                    }
+                    try {
+                        payload.matching_response = JSON.parse(raw);
+                    } catch {
+                        errorMessage.textContent = 'Ошибка формата пар. Попробуйте еще раз.';
+                        return;
+                    }
+
+                } else {
+                    const selected = document.querySelector('input[name="selected_option"]:checked')?.value;
+                    if (!selected) {
+                        errorMessage.textContent = 'Пожалуйста, выберите вариант ответа.';
+                        return;
+                    }
+                    payload.selected_option = parseInt(selected, 10);
+                }
+
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Submitting...';
-                errorMessage.textContent = '';
 
                 try {
                     const response = await fetch(submitUrl, {
@@ -171,35 +391,27 @@
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({
-                            selected_option: parseInt(selected, 10)
-                        })
+                        body: JSON.stringify(payload),
                     });
 
-                    // Handle non-JSON / server errors gracefully
-                    let data = null;
                     const contentType = response.headers.get('content-type') || '';
-                    if (contentType.includes('application/json')) {
-                        data = await response.json();
-                    } else {
-                        throw new Error('Unexpected response (not JSON).');
-                    }
+                    if (!contentType.includes('application/json')) throw new Error('Unexpected response (not JSON).');
+
+                    const data = await response.json();
 
                     if (data.completed && data.redirect) {
                         window.location.href = data.redirect;
                         return;
                     }
 
-                    if (data.next_question && data.question_number) {
-                        loadQuestion(data.next_question, data.question_number);
+                    if (data.error) {
+                        errorMessage.textContent = data.error;
+                        if (data.redirect) setTimeout(() => window.location.href = data.redirect, 1500);
                         return;
                     }
 
-                    if (data.error) {
-                        errorMessage.textContent = data.error;
-                        if (data.redirect) {
-                            setTimeout(() => window.location.href = data.redirect, 2000);
-                        }
+                    if (data.next_question && typeof data.question_number !== 'undefined') {
+                        loadQuestion(data.next_question, data.question_number);
                         return;
                     }
 
@@ -215,30 +427,39 @@
             function loadQuestion(question, questionNumber) {
                 document.getElementById('question-text').textContent = question.question ?? '';
                 document.getElementById('question-id').value = question.id ?? '';
-                document.getElementById('current-question').textContent = questionNumber + 1;
+                document.getElementById('current-question').textContent = (questionNumber + 1);
 
-                const labels = document.querySelectorAll('.option-label');
-                const options = [question.option_1, question.option_2, question.option_3, question.option_4];
+                const qType = question.question_type ?? 'single_choice';
+                document.getElementById('question-type').value = qType;
 
-                labels.forEach((label, index) => {
-                    const optionText = label.querySelector('.option-text');
-                    const radioInput = label.querySelector('input');
+                showOnlyBlock(qType);
 
-                    const value = options[index];
+                setQuestionImage(question.image ?? null);
 
-                    if (value !== null && value !== undefined && String(value).trim() !== '') {
-                        if (optionText) optionText.textContent = value;
-                        if (radioInput) radioInput.checked = false;
-                        label.style.display = 'flex';
-                    } else {
-                        // If hidden, also ensure it's not selected
-                        if (radioInput) radioInput.checked = false;
-                        label.style.display = 'none';
-                    }
-                });
+                updateOptionsSingle(question);
+                updateOptionsMulti(question);
 
-                currentQuestionNumber = questionNumber;
+                if (qType === 'matching') {
+                    renderMatchingUI(question.matching_pairs ?? []);
+                } else {
+                    const mu = document.getElementById('matching-ui');
+                    const mr = document.getElementById('matching-response');
+                    if (mu) mu.innerHTML = '';
+                    if (mr) mr.value = '';
+                }
             }
+
+            // Initial init
+            (function initFirstQuestion() {
+                const initialType = document.getElementById('question-type').value || 'single_choice';
+                showOnlyBlock(initialType);
+
+                if (initialType === 'matching') {
+                    const container = document.getElementById('matching-ui');
+                    const mp = container ? container.dataset.matching : null;
+                    if (mp) { try { renderMatchingUI(JSON.parse(mp)); } catch {} }
+                }
+            })();
         </script>
     @endpush
 </x-quiz-layout>

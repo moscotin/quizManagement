@@ -34,8 +34,9 @@ class QuizCategory extends Model
      */
     public static function getCategoriesByMonth($month)
     {
+        $date = $month . ' 1 '.date('Y');
         // Make beginning of month format YYYY-MM
-        $month = date('Y-m', strtotime($month));
+        $month = date('Y-m', strtotime($date));
         // Get all categories that have quizzes in the given month
         return self::whereHas('quizzes', function ($query) use ($month) {
             $query->where('start', 'like', $month . '%');

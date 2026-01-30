@@ -19,6 +19,7 @@ class QuizParticipant extends Model
         'quiz_id',
         'user_id',
         'score',
+        'passed',
         'started_at',
         'completed_at',
     ];

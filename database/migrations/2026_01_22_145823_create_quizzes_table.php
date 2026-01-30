@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('category_id')->unsigned();
             $table->dateTime('start');
             $table->dateTime('end');
-            $table->integer('time_limit')->default(20); // in minutes
+            $table->integer('time_limit')->default(12); // in minutes
             // 4 images
             $table->string('image1')->nullable();
             $table->string('image2')->nullable();

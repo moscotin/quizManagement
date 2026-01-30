@@ -13,12 +13,30 @@ return new class extends Migration
     {
         Schema::create('quiz_responses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('participant_id')->constrained('quiz_participants')->onDelete('cascade');
-            $table->foreignId('question_id')->constrained('quiz_questions')->onDelete('cascade');
-            $table->integer('selected_option'); // 1-4, the option selected by user
+
+            $table->foreignId('participant_id')
+                ->constrained('quiz_participants')
+                ->cascadeOnDelete();
+
+            $table->foreignId('question_id')
+                ->constrained('quiz_questions')
+                ->cascadeOnDelete();
+
+            // For single choice (1–6)
+            $table->unsignedTinyInteger('selected_option')->nullable();
+
+            // For multiple choice (e.g. [1,3,4])
+            $table->json('selected_options')->nullable();
+
+            // For fill-in-the-blank / text answers
+            $table->text('answer_text')->nullable();
+
+            // For matching questions (structure depends on your frontend)
+            $table->json('matching_response')->nullable();
+
             $table->boolean('is_correct')->default(false);
             $table->timestamps();
-            
+
             $table->unique(['participant_id', 'question_id']);
         });
     }

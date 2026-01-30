@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
 
     // Certificate and Diploma routes
     Route::get('/quiz/{quizId}/certificate', [QuizController::class, 'viewCertificate'])->name('quiz.certificate');
-    Route::get('/quiz/{quizId}/diploma', [QuizController::class, 'viewDiploma'])->name('quiz.diploma');
+    Route::get('/quiz/{month}/category/{category}/diploma', [QuizController::class, 'viewDiploma'])->name('quiz.diploma');
 });
 
 require __DIR__.'/auth.php';

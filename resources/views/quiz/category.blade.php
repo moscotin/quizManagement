@@ -50,7 +50,9 @@
                                     @else
                                         <a href="{{ route('quiz.start', $quiz->id) }}"
                                            class="btn-purple btn-hover-white btn-glow open-quiz-modal"
-                                           data-start-url="{{ route('quiz.start', $quiz->id) }}">
+                                           data-start-url="{{ route('quiz.start', $quiz->id) }}"
+                                           data-time-limit="{{ $quiz->time_limit }}"
+                                        >
                                             Начать викторину
                                         </a>
                                     @endif
@@ -75,7 +77,7 @@
                                                 </p>
 
                                                 <p>
-                                                    На прохождение каждой викторины выделяется 12 минут. Таймер запускается после
+                                                    На прохождение каждой викторины выделяется <span id="minuteHolder">12</span> минут. Таймер запускается после
                                                     перехода к первому вопросу.
                                                 </p>
                                                 <p>Вернуться к предыдущему вопросу после ответа на него
@@ -104,6 +106,14 @@
                     @else
                         <p class="text-gray-600">No quizzes available for {{ $month }} yet.</p>
                     @endif
+
+                    @if ($all_quizzes_passed)
+                        <div class="mt-6 text-center">
+                            <a href="{{ route('quiz.diploma', ['month' => $month, 'category' => $category_id]) }}" class="btn-purple btn-hover-white btn-glow">
+                                Скачать диплом
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -119,6 +129,15 @@
 
     function openModal({ startUrl }) {
         startEl.href = startUrl || '#';
+
+        // Fill the minuteHolder span with the time limit from the quiz
+        // from the data-time-limit attribute of the clicked button
+        const clickedButton = document.querySelector(`a.open-quiz-modal[data-start-url="${startUrl}"]`);
+        const timeLimit = clickedButton ? clickedButton.dataset.timeLimit : null;
+        const minuteHolder = document.getElementById('minuteHolder');
+        if (timeLimit && minuteHolder) {
+            minuteHolder.textContent = timeLimit;
+        }
 
         modal.classList.remove('opacity-0', 'pointer-events-none');
         modal.classList.add('opacity-100');

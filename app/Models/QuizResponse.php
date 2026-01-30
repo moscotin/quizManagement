@@ -15,7 +15,19 @@ class QuizResponse extends Model
     protected $fillable = [
         'participant_id',
         'question_id',
+
+        // single choice
         'selected_option',
+
+        // multiple choice
+        'selected_options',
+
+        // text / fill in the blank
+        'answer_text',
+
+        // matching
+        'matching_response',
+
         'is_correct',
     ];
 
@@ -27,7 +39,9 @@ class QuizResponse extends Model
     protected function casts(): array
     {
         return [
-            'is_correct' => 'boolean',
+            'selected_options'  => 'array',
+            'matching_response' => 'array',
+            'is_correct'        => 'boolean',
         ];
     }
 

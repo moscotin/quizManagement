@@ -16,10 +16,12 @@ return new class extends Migration
             $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->unsignedInteger('score')->nullable();
+            // except for score, also store is user passed or failed
+            $table->boolean('passed')->nullable();
             $table->dateTime('started_at')->nullable();
             $table->dateTime('completed_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['quiz_id', 'user_id']);
         });
     }

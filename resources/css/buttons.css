@@ -8,6 +8,8 @@
         text-white
         transition-all duration-200 ease-out
         border-2
+        text-center
+        text-sm
     }
 
     .btn-glow::after {

@@ -13,13 +13,40 @@ return new class extends Migration
     {
         Schema::create('quiz_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
+
+            $table->foreignId('quiz_id')
+                ->constrained('quizzes')
+                ->cascadeOnDelete();
+
             $table->text('question');
-            $table->string('option_1');
-            $table->string('option_2');
+
+            // Options for single & multiple choice questions
+            $table->string('option_1')->nullable();
+            $table->string('option_2')->nullable();
             $table->string('option_3')->nullable();
             $table->string('option_4')->nullable();
-            $table->integer('correct_option'); // Should be 1-4, validated at application level
+            $table->string('option_5')->nullable();
+            $table->string('option_6')->nullable();
+
+            // Correct option index for single choice questions (1–6)
+            $table->unsignedTinyInteger('correct_option')->nullable();
+
+            // Correct options for multiple choice questions (e.g. [1,3,4])
+            $table->json('correct_options')->nullable();
+
+            // Correct answer for text / fill-in-the-blank questions
+            $table->string('correct_answer')->nullable();
+
+            // Matching pairs for matching questions
+            $table->json('matching_pairs')->nullable();
+
+            // Optional image per question
+            $table->string('image')->nullable();
+
+            // Question type
+            // single_choice | multiple_choice | fill_in_the_blank | matching
+            $table->string('question_type')->default('single_choice');
+
             $table->timestamps();
         });
     }
