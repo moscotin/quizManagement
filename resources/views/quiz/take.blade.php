@@ -308,27 +308,27 @@
                     optionsWrap.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
 
                     // "Not selected" option (acts like placeholder)
-                    const noneLabel = document.createElement('label');
-                    noneLabel.className = 'flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50';
+                    // const noneLabel = document.createElement('label');
+                    // noneLabel.className = 'flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50';
 
-                    const noneRadio = document.createElement('input');
-                    noneRadio.type = 'radio';
-                    noneRadio.name = groupName;
-                    noneRadio.value = '';
-                    noneRadio.checked = true;
-
-                    const noneText = document.createElement('span');
-                    noneText.className = 'text-gray-500';
-                    noneText.textContent = 'Не выбрано';
-
-                    noneRadio.addEventListener('change', () => {
-                        selections[left] = '';
-                        updateHidden();
-                    });
-
-                    noneLabel.appendChild(noneRadio);
-                    noneLabel.appendChild(noneText);
-                    optionsWrap.appendChild(noneLabel);
+                    // const noneRadio = document.createElement('input');
+                    // noneRadio.type = 'radio';
+                    // noneRadio.name = groupName;
+                    // noneRadio.value = '';
+                    // noneRadio.checked = true;
+                    //
+                    // const noneText = document.createElement('span');
+                    // noneText.className = 'text-gray-500';
+                    // noneText.textContent = 'Не выбрано';
+                    //
+                    // noneRadio.addEventListener('change', () => {
+                    //     selections[left] = '';
+                    //     updateHidden();
+                    // });
+                    //
+                    // noneLabel.appendChild(noneRadio);
+                    // noneLabel.appendChild(noneText);
+                    // optionsWrap.appendChild(noneLabel);
 
                     // Right options as radios
                     rightItems.forEach((r) => {
