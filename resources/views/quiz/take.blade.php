@@ -113,7 +113,9 @@
 
         <div class="absolute {{ $quiz->image2_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image2 }}')] bg-contain bg-no-repeat -z-1"></div>
         <div class="absolute {{ $quiz->image3_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image3 }}')] bg-contain bg-no-repeat -z-1"></div>
-        <div class="absolute {{ $quiz->image4_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image4 }}')] bg-contain bg-no-repeat -z-1"></div>
+        @if($quiz->image4)
+            <div class="absolute {{ $quiz->image4_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image4 }}')] bg-contain bg-no-repeat -z-1"></div>
+        @endif
     </div>
 
     @push('scripts')
