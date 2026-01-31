@@ -36,7 +36,7 @@
                                 <img id="question-image"
                                      src="{{ $currentQuestion->image ? '/img/quiz_question_images/'.$currentQuestion->image : '' }}"
                                      alt=""
-                                     class="max-w-full rounded-xl border">
+                                     class="max-w-full rounded-xl border mx-auto">
                             </div>
                         </div>
 
@@ -228,7 +228,7 @@
                 if (imagePathOrNull && String(imagePathOrNull).trim() !== '') {
                     img.src = imagePathOrNull.startsWith('http')
                         ? imagePathOrNull
-                        : @json(asset('storage')) + '/' + imagePathOrNull.replace(/^\/+/, '');
+                        : '/img/quiz_question_images/' + imagePathOrNull;
                     wrap.classList.remove('hidden');
                 } else {
                     img.src = '';
