@@ -17,7 +17,7 @@
                             @foreach($quizzes as $quiz)
                                 <div class="flex-col lg:w-1/4 w-full p-4 flex items-center space-y-4">
                                     <div class="text-center">
-                                        <h4 class="font-semibold text-lg">{{ $quiz->name }}</h4>
+                                        <h4 class="font-semibold text-lg min-h-14">{{ $quiz->name }}</h4>
                                         @if($quiz->isStartedByUser(auth()->user()))
                                             <!-- display a warning icon -->
                                             <div class="flex items-center justify-center mt-2">
