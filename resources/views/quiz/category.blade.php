@@ -20,7 +20,7 @@
                                         <h4 class="font-semibold text-lg min-h-14">{{ $quiz->name }}</h4>
                                         @if($quiz->isStartedByUser(auth()->user()))
                                             <!-- display a warning icon -->
-                                            <div class="flex items-center justify-center mt-2">
+                                            <div class="flex items-center justify-center min-h-9 mt-2">
                                                 <svg class="w-6 h-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
@@ -28,15 +28,17 @@
                                             </div>
                                         @elseif($quiz->isTakenByUser(auth()->user()))
                                             <!-- display a checkmark icon -->
-                                            <div class="flex items-center justify-center mt-2">
+                                            <div class="flex items-center justify-center min-h-9 mt-2">
                                                 <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                 </svg>
                                                 <span class="text-green-600 font-medium">Викторина пройдена</span>
                                             </div>
                                         @else
-                                        <p class="text-gray-600 text-sm">{{ $quiz->questions->count() }} {{ $questionWording($quiz->questions->count()) }}</p>
-                                        <p class="text-gray-600 text-sm">Ограничение по времени: {{ $quiz->time_limit }} минут</p>
+                                            <div class="flex items-center justify-center min-h-9 mt-2">
+                                                <p class="text-gray-600 text-sm">{{ $quiz->questions->count() }} {{ $questionWording($quiz->questions->count()) }}</p>
+                                                <p class="text-gray-600 text-sm">Ограничение по времени: {{ $quiz->time_limit }} минут</p>
+                                            </div>
                                         @endif
                                     </div>
                                     @if($quiz->isStartedByUser(auth()->user()))
