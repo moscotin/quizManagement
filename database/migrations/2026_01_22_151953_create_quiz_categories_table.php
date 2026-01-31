@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('diploma_image')->nullable();
             // certificate image
             $table->string('certificate_image')->nullable();
+            // additional description for category page
+            $table->text('additional_description')->nullable();
             $table->timestamps();
         });
     }
