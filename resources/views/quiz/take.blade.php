@@ -108,11 +108,12 @@
             </div>
 
             <!-- Background decorative elements -->
-            <div class="absolute -top-28 -right-20 w-48 h-48 bg-[url('/img/quiz_decorations/en1.webp')] bg-contain bg-no-repeat -z-1"></div>
+            <div class="absolute {{ $quiz->image1_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image1 }}')] bg-contain bg-no-repeat -z-1"></div>
         </div>
 
-        <div class="absolute bottom-0 left-0 w-full h-full bg-[url('/img/quiz_decorations/en2.webp')] bg-contain bg-no-repeat -z-1"></div>
-        <div class="absolute bottom-0 -right-12 w-64 h-64 bg-[url('/img/quiz_decorations/en3.webp')] bg-contain bg-no-repeat -z-1"></div>
+        <div class="absolute {{ $quiz->image2_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image2 }}')] bg-contain bg-no-repeat -z-1"></div>
+        <div class="absolute {{ $quiz->image3_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image3 }}')] bg-contain bg-no-repeat -z-1"></div>
+        <div class="absolute {{ $quiz->image4_class }} bg-[url('/img/quiz_decorations/{{ $quiz->image4 }}')] bg-contain bg-no-repeat -z-1"></div>
     </div>
 
     @push('scripts')
