@@ -106,14 +106,12 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Background decorative elements -->
-            <div
-                class="absolute {{ $quiz->image1_class }} bg-contain bg-no-repeat -z-1"
-                style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image1) }}')"
-            ></div>
         </div>
-
+        <!-- Background decorative elements -->
+        <div
+            class="absolute {{ $quiz->image1_class }} bg-contain bg-no-repeat -z-1"
+            style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image1) }}')"
+        ></div>
         <div
             class="absolute {{ $quiz->image2_class }} bg-contain bg-no-repeat -z-1"
             style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image2) }}')"
