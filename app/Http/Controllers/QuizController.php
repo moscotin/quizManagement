@@ -124,6 +124,7 @@ class QuizController extends Controller
             'all_quizzes_passed' => $all_quizzes_passed,
             'category_id' => $category_id,
             'category_name' => $category_name,
+            'category_desc' => QuizCategory::getCategoryDesc($category_id),
         ]);
     }
 

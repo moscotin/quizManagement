@@ -118,6 +118,14 @@
             </div>
         </div>
     </div>
+
+    @if($category_desc)
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 text-center">
+            <span class="px-6 p-2 text-gray-900 border-orange-400 border-2 rounded-3xl bg-white text-center font-bold">
+                    {!! nl2br(e($category_desc)) !!}
+            </span>
+        </div>
+    @endif
 </x-app-layout>
 
 <!-- Modal script -->

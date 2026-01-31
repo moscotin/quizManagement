@@ -53,4 +53,10 @@ class QuizCategory extends Model
         $category = self::find($category_id);
         return $category ? $category->name : null;
     }
+
+    public static function getCategoryDesc($category_id)
+    {
+        $category = self::find($category_id);
+        return $category ? $category->description : null;
+    }
 }
