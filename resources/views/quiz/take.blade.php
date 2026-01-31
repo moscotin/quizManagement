@@ -34,7 +34,7 @@
                             {{-- Optional image --}}
                             <div id="question-image-wrap" class="{{ $currentQuestion->image ? '' : 'hidden' }} mb-4">
                                 <img id="question-image"
-                                     src="{{ $currentQuestion->image ? asset('storage/'.$currentQuestion->image) : '' }}"
+                                     src="{{ $currentQuestion->image ? '/img/quiz_question_images/'.$currentQuestion->image : '' }}"
                                      alt=""
                                      class="max-w-full rounded-xl border">
                             </div>
@@ -435,7 +435,7 @@
                 }
 
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
+                submitBtn.textContent = 'Отправка...';
 
                 try {
                     const response = await fetch(submitUrl, {

@@ -67,10 +67,10 @@
                                              class="bg-white rounded-3xl shadow-lg max-w-6xl w-full
                 transform scale-95 translate-y-4
                 transition-all duration-300 ease-in-out">
-                                        <div class="bg-[url('/img/bg_left.svg')] bg-left bg-no-repeat p-6 px-20">
-                                            <div class="badge my-4 text-left">Правила участия в викторине:</div>
+                                        <div class="bg-[url('/img/bg_left.svg')] bg-left bg-no-repeat lg:p-6 p-2 lg:px-20">
+                                            <div class="badge lg:my-4 text-left">Правила участия в викторине:</div>
 
-                                            <div class="text-block my-4 p-6 bg-white mx-auto text-center rounded-3xl border-gray-100 border">
+                                            <div class="text-block lg:my-4 lg:p-6 bg-white mx-auto text-center rounded-3xl border-gray-100 border">
                                                 <p>
                                                     Для получения диплома победителя нужно пройти каждую из четырех викторин
                                                     с результатом 90% и выше.
@@ -121,7 +121,7 @@
 
     @if($category_desc)
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 text-center">
-            <span class="px-6 p-2 text-gray-900 border-orange-400 border-2 rounded-3xl bg-white text-center font-bold">
+            <span class="px-6 p-2 text-gray-900 border-orange-400 border-2 rounded-3xl bg-white text-center font-bold inline-block">
                     {!! nl2br(e($category_desc)) !!}
             </span>
         </div>
