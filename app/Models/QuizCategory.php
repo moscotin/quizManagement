@@ -20,6 +20,11 @@ class QuizCategory extends Model
         'description',
     ];
 
+    private static function find($category_id)
+    {
+        return self::where('id', $category_id)->first();
+    }
+
     /**
      * Get the quizzes for the category.
      */
@@ -41,5 +46,11 @@ class QuizCategory extends Model
         return self::whereHas('quizzes', function ($query) use ($month) {
             $query->where('start', 'like', $month . '%');
         })->get();
+    }
+
+    public static function getCategoryName($category_id)
+    {
+        $category = self::find($category_id);
+        return $category ? $category->name : null;
     }
 }

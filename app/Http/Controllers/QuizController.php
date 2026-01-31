@@ -70,6 +70,8 @@ class QuizController extends Controller
             ->whereMonth('start', date('m', $monthNum))
             ->get();
 
+        $category_name = QuizCategory::getCategoryName($category_id);
+
         $user = Auth::user();
         $all_quizzes_passed = true;
         foreach ($quizzes as $quiz) {
@@ -121,6 +123,7 @@ class QuizController extends Controller
             },
             'all_quizzes_passed' => $all_quizzes_passed,
             'category_id' => $category_id,
+            'category_name' => $category_name,
         ]);
     }
 
