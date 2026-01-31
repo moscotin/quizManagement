@@ -58,5 +58,34 @@ export default {
         // w-[123px], w-[10rem], w-[42%]
         { pattern: /^w-\[[^\]]+]$/ },
         { pattern: /^(min-w|max-w)-\[[^\]]+]$/ },
+
+        // -------------------------
+        // HEIGHTS (core)
+        // -------------------------
+        // h-0, h-1, h-48, h-96, etc.
+        { pattern: /^h-\d+$/ },
+
+        // h-px
+        { pattern: /^h-px$/ },
+
+        // h-full, h-screen, h-auto, h-fit, h-min, h-max
+        { pattern: /^h-(full|screen|auto|min|max|fit)$/ },
+
+        // h-1/2, h-3/4, h-2/5, etc.
+        { pattern: /^h-\d+\/\d+$/ },
+
+        // -------------------------
+        // MAX / MIN HEIGHTS
+        // -------------------------
+        { pattern: /^(min-h|max-h)-\d+$/ },
+        { pattern: /^(min-h|max-h)-(full|screen|min|max|fit)$/ },
+        { pattern: /^(min-h|max-h)-\d+\/\d+$/ },
+
+        // -------------------------
+        // ARBITRARY HEIGHTS
+        // -------------------------
+        // h-[123px], h-[10rem], h-[42%]
+        { pattern: /^h-\[[^\]]+]$/ },
+        { pattern: /^(min-h|max-h)-\[[^\]]+]$/ },
     ],
 };
