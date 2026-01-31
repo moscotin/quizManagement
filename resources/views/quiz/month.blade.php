@@ -16,12 +16,12 @@
                             <div class="grid lg:grid-cols-3 gap-4">
                             @foreach($quizCats as $quizCat)
                                 <div class="flex-col p-4 flex items-center space-y-4">
-                                    <div class="">
+                                    <div class="h-64 flex items-end justify-center overflow-hidden">
                                         <a href="{{ route('quiz.category', [
                                             'month' => $month,
                                             'category' => $quizCat->id
                                         ]) }}">
-                                            <img src="{{ asset('img/' . ($quizCat->image ?? 'default.png')) }}" alt="Quiz Icon" class="h-64">
+                                            <img src="{{ asset('img/' . ($quizCat->image ?? 'default.png')) }}" alt="Quiz Icon" class="max-h-64">
                                         </a>
                                     </div>
                                     <div class="text-center">
