@@ -172,6 +172,8 @@
                 if (at) at.value = '';
                 const mr = document.getElementById('matching-response');
                 if (mr) mr.value = '';
+                // clear matching radios too (if any)
+                document.querySelectorAll('#matching-ui input[type="radio"]').forEach(r => r.checked = false);
             }
 
             function showOnlyBlock(type) {
@@ -237,8 +239,6 @@
                         label.style.display = 'none';
                     }
                 });
-
-                // ✅ IMPORTANT: do NOT set required here
             }
 
             function updateOptionsMulti(question) {
@@ -260,6 +260,9 @@
                 });
             }
 
+            // ----------------------------
+            // MATCHING UI (RADIO LISTS)
+            // ----------------------------
             function renderMatchingUI(matchingPairs) {
                 const container = document.getElementById('matching-ui');
                 const hidden = document.getElementById('matching-response');
@@ -271,52 +274,89 @@
                 if (Array.isArray(matchingPairs)) {
                     pairs = matchingPairs;
                 } else if (matchingPairs && typeof matchingPairs === 'object') {
-                    pairs = Object.entries(matchingPairs).map(([left, right]) => ({left, right}));
+                    pairs = Object.entries(matchingPairs).map(([left, right]) => ({ left, right }));
                 }
 
                 const leftItems = pairs.map(p => p.left);
                 const rightItems = pairs.map(p => p.right);
 
-                const rows = leftItems.map((left) => {
+                // store selection per left item
+                const selections = {};
+
+                const updateHidden = () => {
+                    const map = {};
+                    for (const [l, v] of Object.entries(selections)) {
+                        if (l && v) map[l] = v;
+                    }
+                    hidden.value = JSON.stringify(map);
+                };
+
+                const makeSafe = (s) => String(s ?? '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_а-яё-]/gi, '');
+                const groupPrefix = `match_${Date.now()}_`;
+
+                leftItems.forEach((left, idx) => {
                     const row = document.createElement('div');
-                    row.className = 'flex items-center gap-3 p-3 border rounded-lg mb-2';
+                    row.className = 'p-3 border rounded-lg mb-2';
 
                     const leftEl = document.createElement('div');
-                    leftEl.className = 'flex-1 font-medium';
+                    leftEl.className = 'font-medium mb-2';
                     leftEl.textContent = left;
 
-                    const select = document.createElement('select');
-                    select.className = 'flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500';
-                    select.dataset.left = left;
+                    const groupName = groupPrefix + idx + '_' + makeSafe(left);
 
-                    const placeholder = document.createElement('option');
-                    placeholder.value = '';
-                    placeholder.textContent = 'Выберите...';
-                    select.appendChild(placeholder);
+                    const optionsWrap = document.createElement('div');
+                    optionsWrap.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
 
-                    rightItems.forEach((r) => {
-                        const opt = document.createElement('option');
-                        opt.value = r;
-                        opt.textContent = r;
-                        select.appendChild(opt);
+                    // "Not selected" option (acts like placeholder)
+                    const noneLabel = document.createElement('label');
+                    noneLabel.className = 'flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50';
+
+                    const noneRadio = document.createElement('input');
+                    noneRadio.type = 'radio';
+                    noneRadio.name = groupName;
+                    noneRadio.value = '';
+                    noneRadio.checked = true;
+
+                    const noneText = document.createElement('span');
+                    noneText.className = 'text-gray-500';
+                    noneText.textContent = 'Не выбрано';
+
+                    noneRadio.addEventListener('change', () => {
+                        selections[left] = '';
+                        updateHidden();
                     });
 
-                    select.addEventListener('change', () => {
-                        const map = {};
-                        container.querySelectorAll('select').forEach(s => {
-                            const l = s.dataset.left;
-                            const v = s.value;
-                            if (l && v) map[l] = v;
+                    noneLabel.appendChild(noneRadio);
+                    noneLabel.appendChild(noneText);
+                    optionsWrap.appendChild(noneLabel);
+
+                    // Right options as radios
+                    rightItems.forEach((r) => {
+                        const label = document.createElement('label');
+                        label.className = 'flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50';
+
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = groupName;
+                        radio.value = r;
+
+                        const text = document.createElement('span');
+                        text.textContent = r;
+
+                        radio.addEventListener('change', () => {
+                            selections[left] = r;
+                            updateHidden();
                         });
-                        hidden.value = JSON.stringify(map);
+
+                        label.appendChild(radio);
+                        label.appendChild(text);
+                        optionsWrap.appendChild(label);
                     });
 
                     row.appendChild(leftEl);
-                    row.appendChild(select);
-                    return row;
+                    row.appendChild(optionsWrap);
+                    container.appendChild(row);
                 });
-
-                rows.forEach(r => container.appendChild(r));
             }
 
             // ----------------------------
