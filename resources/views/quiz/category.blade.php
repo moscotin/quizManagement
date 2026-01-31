@@ -35,7 +35,7 @@
                                                 <span class="text-green-600 font-medium">Викторина пройдена</span>
                                             </div>
                                         @else
-                                            <div class="justify-center min-h-9 mt-2">
+                                            <div class="justify-center min-h-10 mt-2">
                                                 <p class="text-gray-600 text-sm">{{ $quiz->questions->count() }} {{ $questionWording($quiz->questions->count()) }}</p>
                                                 <p class="text-gray-600 text-sm">Ограничение по времени: {{ $quiz->time_limit }} минут</p>
                                             </div>
