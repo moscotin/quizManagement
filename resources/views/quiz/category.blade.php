@@ -9,7 +9,7 @@
                         </a>
                     </div>
 
-                    <h3 class="text-lg font-semibold mb-4 text-center">{{ $russianMonthName($month) }}</h3>
+                    <h3 class="text-lg font-semibold mb-4 text-center">{{ $russianMonthName($month) }}: {{ $category_name }}</h3>
 
                     @if($quizzes->count() > 0)
                         <div class="space-y-4">
