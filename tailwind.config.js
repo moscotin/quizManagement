@@ -31,6 +31,22 @@ export default {
         { pattern: /^-inset(-[xy])?-\d+$/ },
 
         // -------------------------
+        // POSITIONING (arbitrary values)
+        // -------------------------
+        { pattern: /^(top|right|bottom|left)-\[[^\]]+]$/ },
+        { pattern: /^-(top|right|bottom|left)-\[[^\]]+]$/ },
+        { pattern: /^inset(-[xy])?-\[[^\]]+]$/ },
+        { pattern: /^-inset(-[xy])?-\[[^\]]+]$/ },
+
+        // -------------------------
+        // left-1/2, -left-1/2, top-1/3, -bottom-2/3, etc.
+        // -------------------------
+        { pattern: /^(top|right|bottom|left)-\d+\/\d+$/ },
+        { pattern: /^-(top|right|bottom|left)-\d+\/\d+$/ },
+        { pattern: /^inset(-[xy])?-\d+\/\d+$/ },
+        { pattern: /^-inset(-[xy])?-\d+\/\d+$/ },
+
+        // -------------------------
         // WIDTHS (core)
         // -------------------------
         // w-0, w-1, w-48, w-96, etc.
