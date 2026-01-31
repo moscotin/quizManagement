@@ -112,21 +112,23 @@
                 class="absolute {{ $quiz->image1_class }} bg-contain bg-no-repeat -z-1"
                 style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image1) }}')"
             ></div>
-        </div>
-        <div
-            class="absolute {{ $quiz->image2_class }} bg-contain bg-no-repeat -z-1"
-            style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image2) }}')"
-        ></div>
-        <div
-            class="absolute {{ $quiz->image3_class }} bg-contain bg-no-repeat -z-1"
-            style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image3) }}')"
-        ></div>
-        @if($quiz->image4)
+
             <div
-                class="absolute {{ $quiz->image4_class }} bg-contain bg-no-repeat -z-1"
-                style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image4) }}')"
+                class="absolute {{ $quiz->image2_class }} bg-contain bg-no-repeat -z-1"
+                style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image2) }}')"
             ></div>
-        @endif
+            <div
+                class="absolute {{ $quiz->image3_class }} bg-contain bg-no-repeat -z-1"
+                style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image3) }}')"
+            ></div>
+            @if($quiz->image4)
+                <div
+                    class="absolute {{ $quiz->image4_class }} bg-contain bg-no-repeat -z-1"
+                    style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image4) }}')"
+                ></div>
+            @endif
+        </div>
+
     </div>
 
     @push('scripts')
