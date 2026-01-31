@@ -13,9 +13,9 @@
 
                     @if($quizzes->count() > 0)
                         <div class="space-y-4">
-                            <div class="flex items-end justify-between">
+                            <div class="grid lg:grid-cols-4 gap-4">
                             @foreach($quizzes as $quiz)
-                                <div class="flex-col lg:w-1/4 w-full p-4 flex items-center space-y-4">
+                                <div class="flex-col p-4 flex items-center space-y-4">
                                     <div class="text-center">
                                         <h4 class="font-semibold text-lg min-h-14">{{ $quiz->name }}</h4>
                                         @if($quiz->isStartedByUser(auth()->user()))
