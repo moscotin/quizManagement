@@ -277,6 +277,18 @@
             }
 
             // ----------------------------
+            // Utility: Shuffle array
+            // ----------------------------
+            function shuffleArray(arr) {
+                const a = arr.slice(); // don't mutate original
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            // ----------------------------
             // MATCHING UI (RADIO LISTS)
             // ----------------------------
             function renderMatchingUI(matchingPairs) {
@@ -293,10 +305,15 @@
                     pairs = Object.entries(matchingPairs).map(([left, right]) => ({ left, right }));
                 }
 
+                // OPTIONAL: shuffle the left rows order
+                pairs = shuffleArray(pairs);
+
                 const leftItems = pairs.map(p => p.left);
                 const rightItems = pairs.map(p => p.right);
 
-                // store selection per left item
+                // Shuffle right options (one random order for the whole question)
+                const shuffledRightItems = shuffleArray(rightItems);
+
                 const selections = {};
 
                 const updateHidden = () => {
@@ -307,7 +324,12 @@
                     hidden.value = JSON.stringify(map);
                 };
 
-                const makeSafe = (s) => String(s ?? '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_а-яё-]/gi, '');
+                const makeSafe = (s) =>
+                    String(s ?? '')
+                        .toLowerCase()
+                        .replace(/\s+/g, '_')
+                        .replace(/[^a-z0-9_а-яё-]/gi, '');
+
                 const groupPrefix = `match_${Date.now()}_`;
 
                 leftItems.forEach((left, idx) => {
@@ -323,31 +345,8 @@
                     const optionsWrap = document.createElement('div');
                     optionsWrap.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
 
-                    // "Not selected" option (acts like placeholder)
-                    // const noneLabel = document.createElement('label');
-                    // noneLabel.className = 'flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50';
-
-                    // const noneRadio = document.createElement('input');
-                    // noneRadio.type = 'radio';
-                    // noneRadio.name = groupName;
-                    // noneRadio.value = '';
-                    // noneRadio.checked = true;
-                    //
-                    // const noneText = document.createElement('span');
-                    // noneText.className = 'text-gray-500';
-                    // noneText.textContent = 'Не выбрано';
-                    //
-                    // noneRadio.addEventListener('change', () => {
-                    //     selections[left] = '';
-                    //     updateHidden();
-                    // });
-                    //
-                    // noneLabel.appendChild(noneRadio);
-                    // noneLabel.appendChild(noneText);
-                    // optionsWrap.appendChild(noneLabel);
-
-                    // Right options as radios
-                    rightItems.forEach((r) => {
+                    // Right options as radios (shuffled)
+                    shuffledRightItems.forEach((r) => {
                         const label = document.createElement('label');
                         label.className = 'flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50';
 
@@ -374,6 +373,7 @@
                     container.appendChild(row);
                 });
             }
+
 
             // ----------------------------
             // Form submission
