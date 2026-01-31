@@ -18,4 +18,10 @@ export default {
     },
 
     plugins: [forms],
+
+    safelist: [
+        'w-32', 'h-32',
+        'w-48', 'h-48',
+        'w-64', 'h-64',
+    ],
 };
