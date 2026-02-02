@@ -18,6 +18,18 @@
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
+        <!-- Образовательная организация -->
+        <div class="mt-4">
+            <x-input-label for="organization" :value="__('Образовательная организация')" />
+            <x-text-input id="organization"
+                          class="block mt-1 w-full"
+                          type="text"
+                          name="organization"
+                          :value="old('organization')"
+                          required />
+            <x-input-error :messages="$errors->get('organization')" class="mt-2" />
+        </div>
+
         <!-- Возраст -->
         <div class="mt-4">
             <x-input-label for="age" :value="__('Возраст')" />
