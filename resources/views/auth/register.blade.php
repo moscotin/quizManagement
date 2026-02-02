@@ -6,7 +6,7 @@
 
         <!-- Имя -->
         <div>
-            <x-input-label for="name" :value="__('Имя')" />
+            <x-input-label for="name" :value="__('ФИО')" />
             <x-text-input id="name"
                           class="block mt-1 w-full"
                           type="text"
