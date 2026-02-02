@@ -86,6 +86,17 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Согласие с политикой конфиденциальности и на обработку персональных данных -->
+        <div class="mt-4">
+            <label for="terms" class="inline-flex items-center">
+                <input id="terms" type="checkbox" name="terms" required class="rounded border-gray-300 text-[#333398] shadow-sm focus:ring-[#333398]">
+                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">
+                    {!! __('Я согласен(а) с политикой конфиденциальности и даю свое согласие на обработку персональных данных.') !!}
+                </span>
+            </label>
+            <x-input-error :messages="$errors->get('terms')" class="mt-2" />
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-[#333398] dark:hover:text-[#5555CC] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#333398]"
                href="{{ route('login') }}">
