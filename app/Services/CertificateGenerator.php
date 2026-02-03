@@ -45,7 +45,7 @@ class CertificateGenerator
 
         // Organization position
         $orgX = ($imageWidth - $orgTextWidth) / 2;
-        $orgY = 1600; // fixed y position
+        $orgY = 1500; // fixed y position
         // Draw the organization on the certificate
         imagettftext($image, $orgFontSize, $angle, $orgX, $orgY, $black, $fontPath, $org);
 
@@ -67,6 +67,10 @@ class CertificateGenerator
         $fontPath = storage_path('fonts/MyriadProRegular.ttf');
         $fontSize = 72;
         $angle = 0;
+
+
+
+        // Name text width calculation
         $textBox = imagettfbbox($fontSize, $angle, $fontPath, $name);$textWidth = $textBox[2] - $textBox[0];
         $imageWidth = imagesx($image);
 
@@ -77,10 +81,29 @@ class CertificateGenerator
             $textWidth = $textBox[2] - $textBox[0];
         }
 
+        // Name position
         $x = ($imageWidth - $textWidth) / 2;
         $y = 1400; // fixed y position
-
+        // Draw the name on the certificate
         imagettftext($image, $fontSize, $angle, $x, $y, $black, $fontPath, $name);
+
+        // Organization text width calculation
+        $orgFontSize = 48;
+        $orgTextBox = imagettfbbox($orgFontSize, $angle, $fontPath, $org);
+        $orgTextWidth = $orgTextBox[2] - $orgTextBox[0];
+        // check text width and adjust font size if needed
+        while ($orgTextWidth > ($imageWidth - 400)) {
+            $orgFontSize -= 2;
+            $orgTextBox = imagettfbbox($orgFontSize, $angle, $fontPath, $org);
+            $orgTextWidth = $orgTextBox[2] - $orgTextBox[0];
+        }
+
+        // Organization position
+        $orgX = ($imageWidth - $orgTextWidth) / 2;
+        $orgY = 1500; // fixed y position
+        // Draw the organization on the certificate
+        imagettftext($image, $orgFontSize, $angle, $orgX, $orgY, $black, $fontPath, $org);
+
 
         ob_start();
         imagejpeg($image, null, 90);
