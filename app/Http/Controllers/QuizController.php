@@ -411,7 +411,7 @@ class QuizController extends Controller
 
         abort_unless($quiz->isTakenByUser($user), 403);
 
-        $image = app(CertificateGenerator::class)->generate($quiz, $user->name);
+        $image = app(CertificateGenerator::class)->generate($quiz, $user->name, $user->organization);
 
         return response()->streamDownload(
             fn() => print($image),
@@ -441,7 +441,7 @@ class QuizController extends Controller
             abort_unless($participant && $participant->passed, 403);
         }
 
-        $image = app(CertificateGenerator::class)->generateDiploma($quizzes->first(), $user->name);
+        $image = app(CertificateGenerator::class)->generateDiploma($quizzes->first(), $user->name, $user->organization);
 
         return response()->streamDownload(
             fn() => print($image),
