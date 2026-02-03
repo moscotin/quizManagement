@@ -83,7 +83,7 @@ class CertificateGenerator
 
         // Name position
         $x = ($imageWidth - $textWidth) / 2;
-        $y = 1400; // fixed y position
+        $y = 1450; // fixed y position
         // Draw the name on the certificate
         imagettftext($image, $fontSize, $angle, $x, $y, $black, $fontPath, $name);
 
@@ -100,7 +100,7 @@ class CertificateGenerator
 
         // Organization position
         $orgX = ($imageWidth - $orgTextWidth) / 2;
-        $orgY = 1500; // fixed y position
+        $orgY = 1550; // fixed y position
         // Draw the organization on the certificate
         imagettftext($image, $orgFontSize, $angle, $orgX, $orgY, $black, $fontPath, $org);
 
