@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,6 +28,9 @@ Route::middleware('auth')->group(function () {
     // Certificate and Diploma routes
     Route::get('/quiz/{quizId}/certificate', [QuizController::class, 'viewCertificate'])->name('quiz.certificate');
     Route::get('/quiz/{month}/category/{category}/diploma', [QuizController::class, 'viewDiploma'])->name('quiz.diploma');
+
+    // Admin routes
+    Route::get('/admin/statistics', [AdminController::class, 'statistics'])->name('admin.statistics');
 });
 
 require __DIR__.'/auth.php';

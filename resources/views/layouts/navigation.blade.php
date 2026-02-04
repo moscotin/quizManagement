@@ -45,6 +45,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        @if(Auth::user()->is_admin ?? false)
+                            <x-dropdown-link :href="route('admin.statistics')">
+                                Статистика (Админ)
+                            </x-dropdown-link>
+                        @endif
+
                         <x-dropdown-link :href="route('profile.edit')">
                             Профиль
                         </x-dropdown-link>
@@ -117,6 +123,12 @@
             </div>
 
             <div class="mt-3 space-y-1">
+                @if(Auth::user()->is_admin ?? false)
+                    <x-responsive-nav-link :href="route('admin.statistics')">
+                        Статистика (Админ)
+                    </x-responsive-nav-link>
+                @endif
+
                 <x-responsive-nav-link :href="route('profile.edit')">
                     Профиль
                 </x-responsive-nav-link>

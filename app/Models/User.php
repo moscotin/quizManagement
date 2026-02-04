@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'phone_number',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -46,6 +47,15 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the quiz participants for the user.
+     */
+    public function participants()
+    {
+        return $this->hasMany(QuizParticipant::class);
     }
 }
