@@ -12,7 +12,8 @@ class AdminController extends Controller
     public function statistics()
     {
         // Only allow admin users
-        abort_unless(auth()->user()->is_admin ?? false, 403, 'Доступ запрещен.');
+        $user = auth()->user();
+        abort_unless($user && ($user->is_admin ?? false), 403, 'Доступ запрещен.');
 
         // Get overall statistics
         $totalUsers = User::count();
