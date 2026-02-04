@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '+79261234567',
             'age' => 30,
             'password' => bcrypt('password'),
+            'is_admin' => true,
         ]);
 
         $this->call(FebDeSeeder::class);

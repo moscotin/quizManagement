@@ -57,10 +57,12 @@ class AdminController extends Controller
                 $query->where('passed', true);
             },
         ])
-        ->having('total_quizzes_taken', '>', 0)
-        ->orderByDesc('total_quizzes_taken')
-        ->limit(20)
         ->get()
+        ->filter(function ($user) {
+            return $user->total_quizzes_taken > 0;
+        })
+        ->sortByDesc('total_quizzes_taken')
+        ->take(20)
         ->map(function ($user) {
             return [
                 'name' => $user->name,
