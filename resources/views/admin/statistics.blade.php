@@ -38,6 +38,7 @@
                             <table class="min-w-full bg-white border border-gray-300">
                                 <thead class="bg-gray-100">
                                     <tr>
+                                        <th class="px-4 py-2 border-b text-left">#</th>
                                         <th class="px-4 py-2 border-b text-left">Название</th>
                                         <th class="px-4 py-2 border-b text-left">Дата начала</th>
                                         <th class="px-4 py-2 border-b text-center">Вопросов</th>
@@ -75,6 +76,7 @@
                                         title="Нажмите, чтобы показать участников"
                                         @endif
                                     >
+                                        <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                                         <td class="px-4 py-2 border-b">
                                             @if($canExpand)
                                                 <span id="{{ $rowId }}-icon" class="mr-2 text-gray-500">▸</span>
@@ -103,6 +105,7 @@
                                                     <table class="min-w-full text-sm bg-white rounded-xl overflow-hidden shadow-sm">
                                                         <thead class="bg-gray-100">
                                                         <tr>
+                                                            <th class="px-3 py-2 text-left">#</th>
                                                             <th class="px-3 py-2 text-left">ФИО</th>
                                                             <th class="px-3 py-2 text-left">Email</th>
                                                             <th class="px-3 py-2 text-left">Телефон</th>
@@ -115,6 +118,7 @@
                                                         <tbody>
                                                         @forelse($participants as $p)
                                                             <tr class="border-t">
+                                                                <td class="px-3 py-2">{{ $loop->iteration }}</td>
                                                                 <td class="px-3 py-2">{{ $p['user_name'] }}</td>
                                                                 <td class="px-3 py-2">{{ $p['user_email'] }}</td>
                                                                 <td class="px-3 py-2">{{ $p['user_phone_number'] }}</td>
