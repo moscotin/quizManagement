@@ -106,7 +106,7 @@
                                                             <th class="px-3 py-2 text-left">ФИО</th>
                                                             <th class="px-3 py-2 text-left">Email</th>
                                                             <th class="px-3 py-2 text-left">Телефон</th>
-                                                            <th class="px-3 py-2 text-left">Организация</th>
+                                                            <th class="px-3 py-2 text-left max-w-12">Организация</th>
                                                             <th class="px-3 py-2 text-center">Баллы</th>
                                                             <th class="px-3 py-2 text-center">Статус</th>
                                                             <th class="px-3 py-2 text-center">Начал</th>
@@ -124,7 +124,7 @@
                                                                 <td class="px-3 py-2 text-center">
                                         <span class="px-2 py-1 rounded-full text-xs font-semibold
                                             {{ $p['passed'] ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                            {{ $p['passed'] ? 'Сдал' : 'Не сдал' }}
+                                            {{ $p['passed'] ? 'Диплом' : 'Сертификат' }}
                                         </span>
                                                                 </td>
                                                                 <td class="px-3 py-2 text-center">{{ $p['started_at'] }}</td>
