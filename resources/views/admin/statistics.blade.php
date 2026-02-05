@@ -100,7 +100,7 @@
                                     {{-- Expandable details row --}}
                                     @if($canExpand)
                                         <tr id="{{ $rowId }}" class="hidden bg-gray-50">
-                                            <td colspan="8" class="px-4 py-4 border-b">
+                                            <td colspan="9" class="px-4 py-4 border-b">
                                                 <div class="overflow-x-auto">
                                                     <table class="min-w-full text-sm bg-white rounded-xl overflow-hidden shadow-sm">
                                                         <thead class="bg-gray-100">
@@ -134,7 +134,7 @@
                                                             </tr>
                                                         @empty
                                                             <tr>
-                                                                <td colspan="8" class="px-3 py-3 text-center text-gray-500">
+                                                                <td colspan="9" class="px-3 py-3 text-center text-gray-500">
                                                                     Нет участников
                                                                 </td>
                                                             </tr>
@@ -148,7 +148,7 @@
 
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-4 py-2 border-b text-center text-gray-500">
+                                        <td colspan="9" class="px-4 py-2 border-b text-center text-gray-500">
                                             Нет данных
                                         </td>
                                     </tr>
