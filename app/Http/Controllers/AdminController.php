@@ -43,8 +43,8 @@ class AdminController extends Controller
                 'total_attempts' => $quiz->total_attempts,
                 'completed_attempts' => $quiz->completed_attempts,
                 'passed_attempts' => $quiz->passed_attempts,
-                'pass_rate' => $quiz->completed_attempts > 0 
-                    ? round(($quiz->passed_attempts / $quiz->completed_attempts) * 100, 1) 
+                'pass_rate' => $quiz->completed_attempts > 0
+                    ? round(($quiz->passed_attempts / $quiz->completed_attempts) * 100, 1)
                     : 0,
             ];
         });
@@ -71,11 +71,41 @@ class AdminController extends Controller
                 'organization' => $user->organization,
                 'total_quizzes_taken' => $user->total_quizzes_taken,
                 'quizzes_passed' => $user->quizzes_passed,
-                'pass_rate' => $user->total_quizzes_taken > 0 
-                    ? round(($user->quizzes_passed / $user->total_quizzes_taken) * 100, 1) 
+                'pass_rate' => $user->total_quizzes_taken > 0
+                    ? round(($user->quizzes_passed / $user->total_quizzes_taken) * 100, 1)
                     : 0,
             ];
         });
+
+        // Get full user statistics
+        // get users and the quizzes they have taken
+        $fullUserStats = User::query()
+            ->whereHas('participants', function ($q) {
+                $q->whereNotNull('completed_at');
+            })
+            ->with(['participants' => function ($q) {
+                $q->whereNotNull('completed_at')
+                    ->with('quiz')
+                    ->orderByDesc('completed_at');
+            }])
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone_number' => $user->phone_number,
+                    'age' => $user->age,
+                    'organization' => $user->organization,
+                    'quizzes_taken' => $user->participants->map(function ($participant) {
+                        return [
+                            'quiz_name' => $participant->quiz->name,
+                            'score' => $participant->score,
+                            'passed' => $participant->passed,
+                            'completed_at' => $participant->completed_at ? $participant->completed_at->format('d.m.Y H:i') : null,
+                        ];
+                    }),
+                ];
+            });
 
         return view('admin.statistics', [
             'totalUsers' => $totalUsers,
@@ -84,6 +114,7 @@ class AdminController extends Controller
             'totalAttempts' => $totalAttempts,
             'quizStats' => $quizStats,
             'userStats' => $userStats,
+            'fullUserStats' => $fullUserStats,
         ]);
     }
 }

@@ -116,6 +116,50 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Full User Statistics -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold mb-4">Все пользователи, прошедшие викторины</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white border border-gray-300">
+                                <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 border-b text-left">Имя</th>
+                                    <th class="px-4 py-2 border-b text-left">Email</th>
+                                    <th class="px-4 py-2 border-b text-left">Телефон</th>
+                                    <th class="px-4 py-2 border-b text-left">Возраст</th>
+                                    <th class="px-4 py-2 border-b text-left">Организация</th>
+                                    <th class="px-4 py-2 border-b text-center">Пройденные викторины</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @forelse($fullUserStats as $stat)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-2 border-b">{{ $stat['name'] }}</td>
+                                        <td class="px-4 py-2 border-b">{{ $stat['email'] }}</td>
+                                        <td class="px-4 py-2 border-b">{{ $stat['phone_number'] }}</td>
+                                        <td class="px-4 py-2 border-b">{{ $stat['age'] }}</td>
+                                        <td class="px-4 py-2 border-b">{{ $stat['organization'] ?? '-' }}</td>
+                                        <td class="px-4 py-2 border-b text-center">
+                                            @foreach($stat['quizzes_taken'] as $quiz)
+                                                <p class="{{ $quiz['passed'] ? 'text-green-600 font-semibold' : 'text-red-600 font-normal' }}">
+                                                    {{ $quiz['quiz_name'] }}
+                                                </p>
+                                            @endforeach
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="px-4 py-2 border-b text-center text-gray-500">
+                                            Нет данных
+                                        </td>
+                                    </tr>
+                                @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
