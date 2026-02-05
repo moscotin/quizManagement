@@ -109,7 +109,6 @@
                                                             <th class="px-3 py-2 text-left max-w-12">Организация</th>
                                                             <th class="px-3 py-2 text-center">Баллы</th>
                                                             <th class="px-3 py-2 text-center">Статус</th>
-                                                            <th class="px-3 py-2 text-center">Начал</th>
                                                             <th class="px-3 py-2 text-center">Завершил</th>
                                                         </tr>
                                                         </thead>
@@ -127,7 +126,6 @@
                                             {{ $p['passed'] ? 'Диплом' : 'Сертификат' }}
                                         </span>
                                                                 </td>
-                                                                <td class="px-3 py-2 text-center">{{ $p['started_at'] }}</td>
                                                                 <td class="px-3 py-2 text-center">{{ $p['completed_at'] }}</td>
                                                             </tr>
                                                         @empty
