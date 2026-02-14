@@ -103,5 +103,22 @@ export default {
         // h-[123px], h-[10rem], h-[42%]
         { pattern: /^h-\[[^\]]+]$/ },
         { pattern: /^(min-h|max-h)-\[[^\]]+]$/ },
+
+        // -------------------------
+        // Translate (core)
+        // -------------------------
+        // translate-x-1, -translate-y-2, etc.
+        { pattern: /^-?translate-[xy]-\d+$/ },
+
+        // translate-x-px, -translate-y-px
+        { pattern: /^-?translate-[xy]-px$/ },
+
+        // translate-x-full, -translate-y-full, etc.
+        { pattern: /^-?translate-[xy]-(full|screen|auto|min|max|fit)$/ },
+
+        // translate-x-1/2, -translate-y-3/4, etc.
+        { pattern: /^-?translate-[xy]-\d+\/\d+$/ },
+
+        // -------------------------
     ],
 };
