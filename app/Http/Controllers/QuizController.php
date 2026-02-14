@@ -134,12 +134,12 @@ class QuizController extends Controller
         $user = Auth::user();
 
         // First check if the quiz started and not ended
-//        if (now()->lt($quiz->start)) {
-//            abort(403, 'Викторина еще не началась.');
-//        }
-//        if (now()->gt($quiz->end)) {
-//            abort(403, 'Время на прохождение викторины истекло.');
-//        }
+        if (now()->lt($quiz->start)) {
+            abort(403, 'Викторина еще не началась.');
+        }
+        if (now()->gt($quiz->end)) {
+            abort(403, 'Время на прохождение викторины истекло.');
+        }
 
         $participant = QuizParticipant::where('quiz_id', $quiz->id)
             ->where('user_id', $user->id)
