@@ -135,7 +135,10 @@ class QuizController extends Controller
 
         // First check if the quiz started and not ended
         if (now()->lt($quiz->start)) {
-            abort(403, 'Викторина еще не началась.');
+            // if user is not admin, block access until start time
+            if (!$user->is_admin) {
+                abort(403, 'Викторина еще не началась.');
+            }
         }
         if (now()->gt($quiz->end)) {
             abort(403, 'Время на прохождение викторины истекло.');
