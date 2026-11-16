@@ -13,7 +13,7 @@
 
                     @if($quizzes->count() > 0)
                         <div class="space-y-4">
-                            <div class="grid lg:grid-cols-4 gap-4">
+                            <div class="flex flex-wrap justify-center gap-4">
                             @foreach($quizzes as $quiz)
                                 @php
                                     $completed = $quiz->isTakenByUser(auth()->user());
@@ -21,7 +21,7 @@
                                     $expired = now()->gt($quiz->end);
                                     $upcoming = !auth()->user()->is_admin && now()->lt($quiz->start);
                                 @endphp
-                                <div class="flex-col p-4 flex items-center space-y-4">
+                                <div class="flex w-full min-w-0 flex-col items-center space-y-4 p-4 lg:basis-[calc((100%_-_3rem)/4)]">
                                     <div class="text-center">
                                         <h4 class="font-semibold text-lg min-h-14">{{ $quiz->name }}</h4>
                                         @if($started && !$expired)

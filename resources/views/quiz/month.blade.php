@@ -13,9 +13,9 @@
 
                     @if($quizCats->count() > 0)
                         <div class="space-y-4">
-                            <div class="grid lg:grid-cols-3 gap-4">
+                            <div class="flex flex-wrap justify-center gap-4">
                             @foreach($quizCats as $quizCat)
-                                <div class="flex-col p-4 flex items-center space-y-4">
+                                <div class="flex w-full min-w-0 flex-col items-center space-y-4 p-4 lg:basis-[calc((100%_-_2rem)/3)]">
                                     <div class="h-64 flex items-end justify-center overflow-hidden">
                                         <a href="{{ route('quiz.category', [
                                             'month' => $month,
