@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
@@ -41,7 +43,7 @@ class Quiz extends Model
      */
     public function questions(): HasMany
     {
-        return $this->hasMany(QuizQuestion::class);
+        return $this->hasMany(QuizQuestion::class)->orderBy('id');
     }
 
     /**
@@ -52,10 +54,19 @@ class Quiz extends Model
         return $this->hasMany(QuizParticipant::class);
     }
 
-    /* Get the quiz start month */
-    public function getStartMonthAttribute()
+    public function category(): BelongsTo
     {
-        return $this->start->format('F');
+        return $this->belongsTo(QuizCategory::class, 'category_id');
+    }
+
+    public function scopeForSeason(Builder $query, bool $archive): Builder
+    {
+        $start = config('quiz.season_start');
+        $end = config('quiz.season_end_exclusive');
+
+        return $archive
+            ? $query->where(fn ($query) => $query->where('start', '<', $start)->orWhere('start', '>=', $end))
+            : $query->where('start', '>=', $start)->where('start', '<', $end);
     }
 
     /* Check if the quiz was taken by user */

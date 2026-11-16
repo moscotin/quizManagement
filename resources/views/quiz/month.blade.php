@@ -5,11 +5,11 @@
                 <div class="p-6 text-gray-900">
                     <div class="mb-4">
                         <a href="{{ route('dashboard') }}" class="font-blue hover:text-blue-700">
-                            ← Назад к выбору месяца
+                            ← Назад к выбору периода
                         </a>
                     </div>
 
-                    <h3 class="text-lg font-semibold mb-4 text-center">{{ $russianMonthName($month) }}</h3>
+                    <h3 class="text-lg font-semibold mb-4 text-center">{{ $periodLabel }}</h3>
 
                     @if($quizCats->count() > 0)
                         <div class="space-y-4">
@@ -21,7 +21,7 @@
                                             'month' => $month,
                                             'category' => $quizCat->id
                                         ]) }}">
-                                            <img src="{{ asset('img/' . ($quizCat->image ?? 'default.png')) }}" alt="Quiz Icon" class="max-h-64">
+                                            <img src="{{ asset('img/' . ($quizCat->image ?? 'default.png')) }}" alt="" class="max-h-64">
                                         </a>
                                     </div>
                                     <div class="text-center">
@@ -39,7 +39,7 @@
                             </div>
                         </div>
                     @else
-                        <p class="text-gray-600">Не найдено викторин за {{ $month }}.</p>
+                        <p class="text-gray-600">Категории пока не опубликованы.</p>
                     @endif
                 </div>
             </div>

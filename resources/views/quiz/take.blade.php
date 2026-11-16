@@ -27,7 +27,7 @@
                     <!-- Question Container -->
                     <div id="question-container">
                         <div class="mb-6">
-                            <h3 class="text-xl font-semibold mb-4" id="question-text">
+                            <h3 class="text-xl font-semibold mb-4 whitespace-pre-line" id="question-text">
                                 {{ $currentQuestion->question }}
                             </h3>
 
@@ -107,26 +107,14 @@
                 </div>
             </div>
 
-            <!-- Background decorative elements -->
-            <div
-                class="absolute {{ $quiz->image1_class }} bg-contain bg-no-repeat -z-1"
-                style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image1) }}')"
-            ></div>
-
-            <div
-                class="absolute {{ $quiz->image2_class }} bg-contain bg-no-repeat -z-1"
-                style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image2) }}')"
-            ></div>
-            <div
-                class="absolute {{ $quiz->image3_class }} bg-contain bg-no-repeat -z-1"
-                style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image3) }}')"
-            ></div>
-            @if($quiz->image4)
-                <div
-                    class="absolute {{ $quiz->image4_class }} bg-contain bg-no-repeat -z-1"
-                    style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->image4) }}')"
-                ></div>
-            @endif
+            @for($i = 1; $i <= 4; $i++)
+                @if($quiz->{"image{$i}"})
+                    <div
+                        class="absolute {{ $quiz->{"image{$i}_class"} }} bg-contain bg-no-repeat -z-1"
+                        style="background-image: url('{{ asset('img/quiz_decorations/'.$quiz->{"image{$i}"}) }}')"
+                    ></div>
+                @endif
+            @endfor
         </div>
 
     </div>

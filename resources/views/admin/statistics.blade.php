@@ -11,11 +11,18 @@
 
                     <h3 class="text-2xl font-bold mb-6 text-center">Статистика викторин</h3>
 
+                    <nav class="flex justify-center gap-6 mb-6" aria-label="Период статистики">
+                        <a href="{{ route('admin.statistics') }}" class="font-blue hover:underline {{ !$archive ? 'font-bold' : '' }}"
+                           @if(!$archive) aria-current="page" @endif>Сезон 2026–2027</a>
+                        <a href="{{ route('admin.statistics', ['archive' => 1]) }}" class="font-blue hover:underline {{ $archive ? 'font-bold' : '' }}"
+                           @if($archive) aria-current="page" @endif>Архив</a>
+                    </nav>
+
                     <!-- Overall Statistics -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                         <div class="bg-blue-100 p-4 rounded-lg text-center">
                             <div class="text-3xl font-bold text-blue-600">{{ $totalUsers }}</div>
-                            <div class="text-sm text-gray-600">Всего пользователей</div>
+                            <div class="text-sm text-gray-600">Участников</div>
                         </div>
                         <div class="bg-green-100 p-4 rounded-lg text-center">
                             <div class="text-3xl font-bold text-green-600">{{ $totalQuizzes }}</div>
@@ -127,7 +134,7 @@
                                                                 <td class="px-3 py-2 text-center">
                                         <span class="px-2 py-1 rounded-full text-xs font-semibold
                                             {{ $p['passed'] ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                            {{ $p['passed'] ? 'Диплом' : 'Сертификат' }}
+                                            {{ $p['passed'] ? 'Сдано' : 'Не сдано' }}
                                         </span>
                                                                 </td>
                                                                 <td class="px-3 py-2 text-center">{{ $p['completed_at'] }}</td>

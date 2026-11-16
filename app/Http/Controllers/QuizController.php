@@ -4,128 +4,109 @@ namespace App\Http\Controllers;
 
 use App\Models\Quiz;
 use App\Models\QuizCategory;
-use App\Models\QuizQuestion;
 use App\Models\QuizParticipant;
+use App\Models\QuizQuestion;
 use App\Models\QuizResponse;
 use App\Services\CertificateGenerator;
 use Carbon\CarbonInterval;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class QuizController extends Controller
 {
-    public function showMonth($month)
+    public function showMonth(string $month)
     {
-        $validMonths = ['february', 'march', 'april', 'may'];
-        if (!in_array(strtolower($month), $validMonths)) {
-            abort(404);
-        }
-
-        $quizCategories = QuizCategory::getCategoriesByMonth($month);
+        $month = strtolower($month);
+        $period = $this->period($month);
 
         return view('quiz.month', [
-            'month' => ucfirst($month),
-            'quizCats' => $quizCategories,
-            'questionWording' => function ($count) {
-                $lastDigit = $count % 10;
-                if ($count % 100 >= 11 && $count % 100 <= 14) {
-                    return 'вопросов';
-                }
-                return match ($lastDigit) {
-                    1 => 'вопрос',
-                    2, 3, 4 => 'вопроса',
-                    default => 'вопросов',
-                };
-            },
-            'russianMonthName' => function ($month) {
-                $months = [
-                    'january' => 'Январь',
-                    'february' => 'Февраль',
-                    'march' => 'Март',
-                    'april' => 'Апрель',
-                    'may' => 'Май',
-                    'june' => 'Июнь',
-                    'july' => 'Июль',
-                    'august' => 'Август',
-                    'september' => 'Сентябрь',
-                    'october' => 'Октябрь',
-                    'november' => 'Ноябрь',
-                    'december' => 'Декабрь',
-                ];
-                return $months[strtolower($month)] ?? $month;
-            },
+            'month' => $month,
+            'periodLabel' => $period['label'],
+            'quizCats' => $this->categoriesForPeriod($month, $period)->orderBy('id')->get(),
         ]);
     }
 
-    public function showCategory($month, $category_id)
+    public function showCategory(string $month, string $category)
     {
-        $validMonths = ['february', 'march', 'april', 'may'];
-        if (!in_array(strtolower($month), $validMonths)) {
-            abort(404);
-        }
-
-        $monthNum = strtotime($month . ' 1 ' . date('Y'));
-
-        $quizzes = Quiz::where('category_id', $category_id)
-            ->whereMonth('start', date('m', $monthNum))
-            ->get();
-
-        $category_name = QuizCategory::getCategoryName($category_id);
-
-        $user = Auth::user();
-        $all_quizzes_passed = true;
-        foreach ($quizzes as $quiz) {
-            if (!$quiz->isTakenByUser($user)) {
-                $all_quizzes_passed = false;
-                break;
-            } else {
-                $participant = QuizParticipant::where('quiz_id', $quiz->id)
-                    ->where('user_id', $user->id)
-                    ->first();
-
-                if (!$participant || !$participant->passed) {
-                    $all_quizzes_passed = false;
-                    break;
-                }
-            }
-        }
+        $month = strtolower($month);
+        $period = $this->period($month);
+        $category = $this->categoriesForPeriod($month, $period)->findOrFail($category);
+        $quizzes = $this->categoryQuizzes($category, $period)->withCount('questions')->orderBy('id')->get();
 
         return view('quiz.category', [
-            'month' => ucfirst($month),
+            'month' => $month,
+            'periodLabel' => $period['label'],
+            'category' => $category,
             'quizzes' => $quizzes,
-            'questionWording' => function ($count) {
-                $lastDigit = $count % 10;
+            'questionWording' => static function (int $count): string {
                 if ($count % 100 >= 11 && $count % 100 <= 14) {
                     return 'вопросов';
                 }
-                return match ($lastDigit) {
+
+                return match ($count % 10) {
                     1 => 'вопрос',
                     2, 3, 4 => 'вопроса',
                     default => 'вопросов',
                 };
             },
-            'russianMonthName' => function ($month) {
-                $months = [
-                    'january' => 'Январь',
-                    'february' => 'Февраль',
-                    'march' => 'Март',
-                    'april' => 'Апрель',
-                    'may' => 'Май',
-                    'june' => 'Июнь',
-                    'july' => 'Июль',
-                    'august' => 'Август',
-                    'september' => 'Сентябрь',
-                    'october' => 'Октябрь',
-                    'november' => 'Ноябрь',
-                    'december' => 'Декабрь',
-                ];
-                return $months[strtolower($month)] ?? $month;
-            },
-            'all_quizzes_passed' => $all_quizzes_passed,
-            'category_id' => $category_id,
-            'category_name' => $category_name,
-            'category_desc' => QuizCategory::getCategoryDesc($category_id),
+            'canDownloadDiploma' => $this->qualifiesForDiploma($quizzes),
         ]);
+    }
+
+    private function period(string $month): array
+    {
+        $period = config('quiz.periods')[$month] ?? config('quiz.previous_periods')[$month] ?? null;
+        abort_if($period === null, 404);
+        abort_unless(Auth::user()->is_admin || now()->gte(Carbon::parse($period['opens_on'])), 403);
+
+        return $period;
+    }
+
+    private function categoriesForPeriod(string $month, array $period): Builder
+    {
+        if (isset(config('quiz.periods')[$month])) {
+            return QuizCategory::where('period', $month);
+        }
+
+        return QuizCategory::whereNull('period')
+            ->whereHas('quizzes', fn ($query) => $this->quizzesStartingInMonth($query, $period['opens_on']));
+    }
+
+    private function quizzesStartingInMonth(Builder $query, string $opensOn): Builder
+    {
+        return $query->where('start', '>=', $opensOn)
+            ->where('start', '<', Carbon::parse($opensOn)->addMonth());
+    }
+
+    private function categoryQuizzes(QuizCategory $category, array $period): Builder
+    {
+        $query = Quiz::where('category_id', $category->id);
+
+        return $category->period === null
+            ? $this->quizzesStartingInMonth($query, $period['opens_on'])
+            : $query;
+    }
+
+    private function qualifiesForDiploma(Collection $quizzes): bool
+    {
+        if ($quizzes->isEmpty() || !$quizzes->first()->diploma_image) {
+            return false;
+        }
+
+        return QuizParticipant::where('user_id', Auth::id())
+            ->whereIn('quiz_id', $quizzes->modelKeys())
+            ->whereNotNull('completed_at')
+            ->where('passed', true)
+            ->count() === $quizzes->count();
+    }
+
+    private function ensureQuizIsOpen(Quiz $quiz): void
+    {
+        abort_if(now()->lt($quiz->start) && !Auth::user()->is_admin, 403, 'Викторина еще не началась.');
+        abort_if(now()->gt($quiz->end), 403, 'Время на прохождение викторины истекло.');
     }
 
     public function startQuiz($quizId)
@@ -133,16 +114,7 @@ class QuizController extends Controller
         $quiz = Quiz::with('questions')->findOrFail($quizId);
         $user = Auth::user();
 
-        // First check if the quiz started and not ended
-        if (now()->lt($quiz->start)) {
-            // if user is not admin, block access until start time
-            if (!$user->is_admin) {
-                abort(403, 'Викторина еще не началась.');
-            }
-        }
-        if (now()->gt($quiz->end)) {
-            abort(403, 'Время на прохождение викторины истекло.');
-        }
+        $this->ensureQuizIsOpen($quiz);
 
         $participant = QuizParticipant::where('quiz_id', $quiz->id)
             ->where('user_id', $user->id)
@@ -196,8 +168,10 @@ class QuizController extends Controller
             ->where('user_id', $user->id)
             ->firstOrFail();
 
-        // Time limit (20 minutes)
-        if (!$participant->started_at || $participant->started_at->diffInMinutes(now()) >= 20) {
+        $this->ensureQuizIsOpen($quiz);
+        abort_if($participant->completed_at, 403);
+
+        if (!$participant->started_at || now()->gte($participant->started_at->copy()->addMinutes($quiz->time_limit))) {
             return response()->json([
                 'error' => 'Время на прохождение викторины истекло.',
                 'redirect' => route('quiz.complete', $quiz->id),
@@ -397,6 +371,7 @@ class QuizController extends Controller
         }
 
         if ($participant->completed_at === null) {
+            $this->ensureQuizIsOpen($quiz);
             $participant->update([
                 'score' => $correctAnswers,
                 'passed' => $passed,
@@ -406,6 +381,7 @@ class QuizController extends Controller
 
         return view('quiz.complete', [
             'quiz' => $quiz,
+            'month' => $quiz->category?->period ?? strtolower($quiz->start->format('F')),
             'score' => $correctAnswers,
             'totalQuestions' => $quiz->questions->count(),
             'participant' => $participant,
@@ -420,7 +396,7 @@ class QuizController extends Controller
         $user = auth()->user();
         $quiz = Quiz::findOrFail($quizId);
 
-        abort_unless($quiz->isTakenByUser($user), 403);
+        abort_unless($quiz->certificate_image && $quiz->isTakenByUser($user), 403);
 
         $image = app(CertificateGenerator::class)->generate($quiz, $user->name, $user->organization ?? '');
 
@@ -435,22 +411,12 @@ class QuizController extends Controller
     {
         $user = auth()->user();
 
-        $monthNum = strtotime($month . ' 1 ' . date('Y'));
+        $month = strtolower($month);
+        $period = $this->period($month);
+        $category = $this->categoriesForPeriod($month, $period)->findOrFail($category);
+        $quizzes = $this->categoryQuizzes($category, $period)->orderBy('id')->get();
 
-        $quizzes = Quiz::where('category_id', $category)
-            ->whereMonth('start', date('m', $monthNum))
-            ->get();
-
-        $quizzesTakenByUser = $quizzes->filter(fn($quiz) => $quiz->isTakenByUser($user));
-        abort_unless($quizzesTakenByUser->count() === $quizzes->count(), 403);
-
-        foreach ($quizzesTakenByUser as $quiz) {
-            $participant = QuizParticipant::where('quiz_id', $quiz->id)
-                ->where('user_id', $user->id)
-                ->first();
-
-            abort_unless($participant && $participant->passed, 403);
-        }
+        abort_unless($this->qualifiesForDiploma($quizzes), 403);
 
         $image = app(CertificateGenerator::class)->generateDiploma($quizzes->first(), $user->name, $user->organization ?? '');
 

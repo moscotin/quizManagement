@@ -13,11 +13,10 @@ class DemoQuizWithAllTypesSeeder extends Seeder
     public function run(): void
     {
 
-        // 2) Quiz (adjust fields to your schema)
-        // If your Quiz model requires other fields (title/start/time_limit/etc.), update them here.
+        $category = QuizCategory::where('image', 'quiz_categories/1.webp')->firstOrFail();
         $quiz = Quiz::create([
             'name' => 'Demo Quiz: all 4 question types',
-            'category_id' => 1,
+            'category_id' => $category->id,
             // start on Feb 1, 2026
             'start' => \Carbon\Carbon::create(2026, 2, 1, 9, 0, 0),
             'end' => \Carbon\Carbon::create(2026, 2, 28, 17, 0, 0),

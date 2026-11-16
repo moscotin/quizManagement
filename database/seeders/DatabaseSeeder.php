@@ -26,8 +26,8 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
-        $this->call(FebDeSeeder::class);
         $this->call(QuizCatSeeder::class);
+        $this->call(FebDeSeeder::class);
         $this->call(DemoQuizWithAllTypesSeeder::class);
     }
 }

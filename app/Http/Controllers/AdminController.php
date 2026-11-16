@@ -9,20 +9,26 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function statistics()
+    public function statistics(Request $request)
     {
         // Only allow admin users
         $user = auth()->user();
         abort_unless($user && ($user->is_admin ?? false), 403, 'Доступ запрещен.');
 
-        // Get overall statistics
-        $totalUsers = User::count();
-        $totalQuizzes = Quiz::count();
-        $totalParticipants = QuizParticipant::whereNotNull('completed_at')->count();
-        $totalAttempts = QuizParticipant::count();
+        $archive = $request->boolean('archive');
+        $seasonQuiz = fn ($query) => $query->forSeason($archive);
+        $seasonAttempt = fn ($query) => $query->whereHas('quiz', $seasonQuiz);
+        $completedAttempt = fn ($query) => $seasonAttempt($query)->whereNotNull('completed_at');
+        $attempts = QuizParticipant::whereHas('quiz', $seasonQuiz);
+
+        $totalUsers = (clone $attempts)->distinct()->count('user_id');
+        $totalQuizzes = Quiz::forSeason($archive)->count();
+        $totalParticipants = (clone $attempts)->whereNotNull('completed_at')->count();
+        $totalAttempts = $attempts->count();
 
         // Get quiz-specific statistics
-        $quizStats = Quiz::withCount([
+        $quizStats = Quiz::forSeason($archive)->withCount([
+            'questions',
             'participants as total_attempts',
             'participants as completed_attempts' => function ($query) {
                 $query->whereNotNull('completed_at');
@@ -31,14 +37,15 @@ class AdminController extends Controller
                 $query->where('passed', true);
             },
         ])
-        ->with('questions')
+        ->orderBy('start')
+        ->orderBy('id')
         ->get()
         ->map(function ($quiz) {
             return [
                 'quiz_id' => $quiz->id,
                 'name' => $quiz->name,
                 'start' => $quiz->start->format('d.m.Y'),
-                'total_questions' => $quiz->questions->count(),
+                'total_questions' => $quiz->questions_count,
                 'required_correct_answers' => $quiz->required_correct_answers,
                 'total_attempts' => $quiz->total_attempts,
                 'completed_attempts' => $quiz->completed_attempts,
@@ -50,20 +57,15 @@ class AdminController extends Controller
         });
 
         // Get user statistics
-        $userStats = User::withCount([
-            'participants as total_quizzes_taken' => function ($query) {
-                $query->whereNotNull('completed_at');
-            },
-            'participants as quizzes_passed' => function ($query) {
-                $query->where('passed', true);
-            },
+        $userStats = User::whereHas('participants', $completedAttempt)
+        ->withCount([
+            'participants as total_quizzes_taken' => $completedAttempt,
+            'participants as quizzes_passed' => fn ($query) => $completedAttempt($query)->where('passed', true),
         ])
+        ->orderByDesc('total_quizzes_taken')
+        ->orderBy('id')
+        ->limit(20)
         ->get()
-        ->filter(function ($user) {
-            return $user->total_quizzes_taken > 0;
-        })
-        ->sortByDesc('total_quizzes_taken')
-        ->take(20)
         ->map(function ($user) {
             return [
                 'name' => $user->name,
@@ -78,7 +80,7 @@ class AdminController extends Controller
         });
 
         // Get full user statistics for each quiz
-        $fullUserStats = Quiz::with(['participants' => function ($q) {
+        $fullUserStats = Quiz::forSeason($archive)->with(['participants' => function ($q) {
             $q->whereNotNull('completed_at')->with('user');
         }])
             ->get()
@@ -103,6 +105,7 @@ class AdminController extends Controller
         $participantsByQuiz = $fullUserStats->keyBy('quiz_id');
 
         return view('admin.statistics', [
+            'archive' => $archive,
             'totalUsers' => $totalUsers,
             'totalQuizzes' => $totalQuizzes,
             'totalParticipants' => $totalParticipants,

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Quiz;
+use App\Models\QuizCategory;
 use App\Models\QuizQuestion;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,10 +15,12 @@ class FebDeSeeder extends Seeder
      */
     public function run(): void
     {
+        $category = QuizCategory::where('image', 'quiz_categories/3.webp')->firstOrFail();
+
         // Create a February quiz
         $quiz1 = Quiz::create([
             'name' => 'Deutsche Märchen',
-            'category_id' => 3,
+            'category_id' => $category->id,
             'start' => \Carbon\Carbon::create(2026, 2, 1, 9, 0, 0),
             'end' => \Carbon\Carbon::create(2026, 2, 28, 17, 0, 0),
             'required_correct_answers' => 13,
@@ -26,7 +29,7 @@ class FebDeSeeder extends Seeder
 
         $quiz2 = Quiz::create([
             'name' => 'Grammatiktest',
-            'category_id' => 3,
+            'category_id' => $category->id,
             'start' => \Carbon\Carbon::create(2026, 2, 1, 9, 0, 0),
             'end' => \Carbon\Carbon::create(2026, 2, 28, 17, 0, 0),
             'required_correct_answers' => 13,
@@ -35,7 +38,7 @@ class FebDeSeeder extends Seeder
 
         $quiz3 = Quiz::create([
             'name' => 'Tierquiz',
-            'category_id' => 3,
+            'category_id' => $category->id,
             'start' => \Carbon\Carbon::create(2026, 2, 1, 9, 0, 0),
             'end' => \Carbon\Carbon::create(2026, 2, 28, 17, 0, 0),
             'required_correct_answers' => 13,
@@ -44,7 +47,7 @@ class FebDeSeeder extends Seeder
 
         $quiz4 = Quiz::create([
             'name' => 'Anfänger-Quiz',
-            'category_id' => 3,
+            'category_id' => $category->id,
             'start' => \Carbon\Carbon::create(2026, 2, 1, 9, 0, 0),
             'end' => \Carbon\Carbon::create(2026, 2, 28, 17, 0, 0),
             'required_correct_answers' => 13,

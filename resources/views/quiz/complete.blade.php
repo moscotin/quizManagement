@@ -31,7 +31,7 @@
 
                     <div class="flex justify-center space-x-4">
                         <a href="{{ route('quiz.category', [
-                            'month' => $quiz->getStartMonthAttribute(),
+                            'month' => $month,
                             'category' => $quiz->category_id
                             ]
                             ) }}" class="btn-purple btn-hover-white btn-glow">
